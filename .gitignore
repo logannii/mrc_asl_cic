@@ -1,0 +1,7 @@
+.vscode
+.DS_Store
+__pycache__
+_version.py
+data/*
+output/*.ipynb_checkpoints
+output/*.log
