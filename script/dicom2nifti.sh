@@ -11,6 +11,7 @@ do
             cd $datadir"/"$sub"/"$scanner"/"$session
             mkdir nifti
             dcm2niix -o nifti -f %d -g i -z y dicom
+            rm dicom
         done
     done
 done
