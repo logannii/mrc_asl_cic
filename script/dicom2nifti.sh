@@ -10,7 +10,6 @@ do
         for session in "s1" "s2"
         do 
             cd $datadir"/"$sub"/"$scanner"/"$session
-            # echo "Success" >> $outputdir"/log_dicom2nifti.txt"
             mkdir nifti
             dcm2niix -o nifti -f %d -g i -z y dicom >> $outputdir"/log_dicom2nifti.txt"
             rm -r dicom
