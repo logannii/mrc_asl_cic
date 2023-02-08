@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 datadir="/Users/xinzhang/Downloads/mrc_asl_cic/data"
+outputdir="/Users/xinzhang/Downloads/mrc_asl_cic/output"
 
 for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07"
 do
@@ -9,9 +10,10 @@ do
         for session in "s1" "s2"
         do 
             cd $datadir"/"$sub"/"$scanner"/"$session
+            # echo "Success" >> $outputdir"/log_dicom2nifti.txt"
             mkdir nifti
-            dcm2niix -o nifti -f %d -g i -z y dicom
-            rm dicom
+            dcm2niix -o nifti -f %d -g i -z y dicom >> $outputdir"/log_dicom2nifti.txt"
+            rm -r dicom
         done
     done
 done
