@@ -10,7 +10,7 @@ do
 
     mkdir analysis
 
-    fsl_anat -i nifti/3D_SAG_T1_MP-RAGE_TI800.nii.gz -o analysis/T1 
+    fsl_anat -i nifti/3D_SAG_T1_MP-RAGE_TI800.nii.gz -o analysis/T1 >> $outputdir"/log_oxford_asl_processing.txt"
     echo "Finished: "$sub" GE Session 1 - fsl_anat"
 
     mkdir analysis/3D_REST
@@ -156,7 +156,7 @@ do
 
     mkdir analysis
 
-    fsl_anat -i nifti/MPRAGE.nii.gz -o analysis/T1 
+    fsl_anat -i nifti/MPRAGE.nii.gz -o analysis/T1 >> $outputdir"/log_oxford_asl_processing.txt"
     echo "Finished: "$sub" Ing Session 1 - fsl_anat"
 
     oxford_asl -i nifti/WIP_SOURCE_-_2dREST_PROD_pCASL-nonorm.nii.gz -o analysis/2D_REST --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASL.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
