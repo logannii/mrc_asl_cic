@@ -5,3 +5,4 @@ _version.py
 data/*
 output/*.ipynb_checkpoints
 output/*.log
+output/log_*.*
