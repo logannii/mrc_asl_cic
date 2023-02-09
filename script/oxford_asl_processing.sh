@@ -1,0 +1,171 @@
+#!/usr/bin/zsh
+
+datadir="/Users/xinzhang/Downloads/mrc_asl_cic/data"
+
+for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07"
+do
+# GE session 1
+    cd $datadir"/"$sub"/ge/s1"
+
+    mkdir analysis
+
+    fsl_anat -i nifti/3D_SAG_T1_MP-RAGE_TI800.nii.gz -o analysis/T1 
+
+    mkdir analysis/3D_REST
+    if (($(fslnvols nifti/3D_Ax_ASL_5_starts.nii.gz)==2)); then 
+        REST_3D_2vol="nifti/3D_Ax_ASL_5_starts.nii.gz"
+        REST_3D_8vol="nifti/3D_Ax_ASL_5_startsa.nii.gz"
+    else
+        REST_3D_2vol="nifti/3D_Ax_ASL_5_startsa.nii.gz"
+        REST_3D_8vol="nifti/3D_Ax_ASL_5_starts.nii.gz"
+    fi
+    fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_M0.nii.gz 0 1
+    fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_CBF.nii.gz 1 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 0 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 1 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 2 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 3 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 4 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 5 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 6 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 7 1
+
+    mkdir analysis/3D_TASK
+    if (($(fslnvols nifti/3D_Ax_ASL_ACT_5_starts.nii.gz)==2)); then 
+        TASK_3D_2vol="nifti/3D_Ax_ASL_ACT_5_starts.nii.gz"
+        TASK_3D_8vol="nifti/3D_Ax_ASL_ACT_5_startsa.nii.gz"
+    else
+        TASK_3D_2vol="nifti/3D_Ax_ASL_ACT_5_startsa.nii.gz"
+        TASK_3D_8vol="nifti/3D_Ax_ASL_ACT_5_starts.nii.gz"
+    fi
+    fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_M0.nii.gz 0 1
+    fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_CBF.nii.gz 1 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 0 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 1 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 2 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 3 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 4 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 5 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 6 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 7 1
+
+    mkdir analysis/eASL_REST
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/diff.nii.gz 0 7 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/CBF.nii.gz 7 1 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/M0.nii.gz 8 1 
+
+    mkdir analysis/eASL_TASK 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/diff.nii.gz 0 7 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/CBF.nii.gz 7 1 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/M0.nii.gz 8 1 
+
+    cd ./analysis 
+    fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
+    fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
+
+    eASL_bolus="1.183,0.682,0.481,0.372,0.303,0.256,0.222"
+    eASL_tis="4.199,3.016,2.334,1.853,1.481,1.178,0.922"
+    eASL_TRM0=$(jq .RepetitionTime nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.json)
+
+    oxford_asl -i eASL_REST/diff.nii.gz -o ./eASL_REST/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_REST/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+
+    oxford_asl -i eASL_TASK/diff.nii.gz -o ./eASL_TASK/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_TASK/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+
+# GE session 2
+    cd $datadir"/"$sub"/ge/s2"
+
+    mkdir analysis
+
+    cp -r $datadir"/"$sub"/ge/s1/analysis/T1.anat" $datadir"/"$sub"/ge/s2/analysis"
+
+    mkdir analysis/3D_REST
+    if (($(fslnvols nifti/3D_Ax_ASL_5_starts.nii.gz)==2)); then 
+        REST_3D_2vol="nifti/3D_Ax_ASL_5_starts.nii.gz"
+        REST_3D_8vol="nifti/3D_Ax_ASL_5_startsa.nii.gz"
+    else
+        REST_3D_2vol="nifti/3D_Ax_ASL_5_startsa.nii.gz"
+        REST_3D_8vol="nifti/3D_Ax_ASL_5_starts.nii.gz"
+    fi
+    fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_M0.nii.gz 0 1
+    fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_CBF.nii.gz 1 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 0 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 1 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 2 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 3 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 4 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 5 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 6 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 7 1
+
+    mkdir analysis/3D_TASK
+    if (($(fslnvols nifti/3D_Ax_ASL_ACT_5_starts.nii.gz)==2)); then 
+        TASK_3D_2vol="nifti/3D_Ax_ASL_ACT_5_starts.nii.gz"
+        TASK_3D_8vol="nifti/3D_Ax_ASL_ACT_5_startsa.nii.gz"
+    else
+        TASK_3D_2vol="nifti/3D_Ax_ASL_ACT_5_startsa.nii.gz"
+        TASK_3D_8vol="nifti/3D_Ax_ASL_ACT_5_starts.nii.gz"
+    fi
+    fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_M0.nii.gz 0 1
+    fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_CBF.nii.gz 1 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 0 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 1 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 2 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 3 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 4 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 5 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 6 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 7 1
+
+    mkdir analysis/eASL_REST
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/diff.nii.gz 0 7 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/CBF.nii.gz 7 1 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/M0.nii.gz 8 1 
+
+    mkdir analysis/eASL_TASK 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/diff.nii.gz 0 7 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/CBF.nii.gz 7 1 
+    fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/M0.nii.gz 8 1 
+
+    cd ./analysis 
+    fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
+    fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
+
+    eASL_bolus="1.183,0.682,0.481,0.372,0.303,0.256,0.222"
+    eASL_tis="4.199,3.016,2.334,1.853,1.481,1.178,0.922"
+    eASL_TRM0=$(jq .RepetitionTime nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.json)
+
+    oxford_asl -i eASL_REST/diff.nii.gz -o ./eASL_REST/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_REST/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+
+    oxford_asl -i eASL_TASK/diff.nii.gz -o ./eASL_TASK/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_TASK/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+
+# Ing session 1
+    cd $datadir"/"$sub"/ing/s1"
+
+    mkdir analysis
+
+    fsl_anat -i nifti/MPRAGE.nii.gz -o analysis/T1 
+
+    oxford_asl -i nifti/WIP_SOURCE_-_2dREST_PROD_pCASL-nonorm.nii.gz -o analysis/2D_REST --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASL.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+    oxford_asl -i nifti/WIP_SOURCE_-_2dACT_PROD_pCASL-nonorm.nii.gz -o analysis/2D_TASK --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASLa.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+    oxford_asl -i nifti/WIP_SOURCE_-_REST_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_REST --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+    oxford_asl -i nifti/SOURCE_-_ACT_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_TASK --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+# Ing session 2
+    cd $datadir"/"$sub"/ing/s2"
+
+    mkdir analysis
+
+    cp -r $datadir"/"$sub"/ge/s1/analysis/T1.anat" $datadir"/"$sub"/ge/s2/analysis"
+
+    oxford_asl -i nifti/WIP_SOURCE_-_2dREST_PROD_pCASL-nonorm.nii.gz -o analysis/2D_REST --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASL.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+    oxford_asl -i nifti/WIP_SOURCE_-_2dACT_PROD_pCASL-nonorm.nii.gz -o analysis/2D_TASK --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASLa.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+    oxford_asl -i nifti/WIP_SOURCE_-_REST_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_REST --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+    oxford_asl -i nifti/SOURCE_-_ACT_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_TASK --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+
+done
