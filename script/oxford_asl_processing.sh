@@ -1,6 +1,7 @@
 #!/usr/bin/zsh
 
 datadir="/Users/xinzhang/Downloads/mrc_asl_cic/data"
+outputdir="/Users/xinzhang/Downloads/mrc_asl_cic/output"
 
 for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07"
 do
@@ -10,6 +11,7 @@ do
     mkdir analysis
 
     fsl_anat -i nifti/3D_SAG_T1_MP-RAGE_TI800.nii.gz -o analysis/T1 
+    echo "Finished: "$sub" GE Session 1 - fsl_anat"
 
     mkdir analysis/3D_REST
     if (($(fslnvols nifti/3D_Ax_ASL_5_starts.nii.gz)==2)); then 
@@ -61,15 +63,20 @@ do
 
     cd ./analysis 
     fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
+    echo "Finished: "$sub" GE Session 1 - 3D REST CBF Averaging"
+    
     fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
+    echo "Finished: "$sub" GE Session 1 - 3D TASK CBF Averaging"
 
     eASL_bolus="1.183,0.682,0.481,0.372,0.303,0.256,0.222"
     eASL_tis="4.199,3.016,2.334,1.853,1.481,1.178,0.922"
     eASL_TRM0=$(jq .RepetitionTime nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.json)
 
-    oxford_asl -i eASL_REST/diff.nii.gz -o ./eASL_REST/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_REST/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+    oxford_asl -i eASL_REST/diff.nii.gz -o ./eASL_REST/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_REST/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr >> $outputdir"/log_oxford_asl_processing.txt"
+    echo "Finished: "$sub" GE Session 1 - eASL REST oxford_asl Processing"
 
-    oxford_asl -i eASL_TASK/diff.nii.gz -o ./eASL_TASK/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_TASK/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+    oxford_asl -i eASL_TASK/diff.nii.gz -o ./eASL_TASK/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_TASK/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr >> $outputdir"/log_oxford_asl_processing.txt"
+    echo "Finished: "$sub" GE Session 1 - eASL TASK oxford_asl Processing"
 
 # GE session 2
     cd $datadir"/"$sub"/ge/s2"
@@ -77,6 +84,7 @@ do
     mkdir analysis
 
     cp -r $datadir"/"$sub"/ge/s1/analysis/T1.anat" $datadir"/"$sub"/ge/s2/analysis"
+    echo "Finished: "$sub" GE Session 2 - fsl_anat"
 
     mkdir analysis/3D_REST
     if (($(fslnvols nifti/3D_Ax_ASL_5_starts.nii.gz)==2)); then 
@@ -128,15 +136,20 @@ do
 
     cd ./analysis 
     fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
+    echo "Finished: "$sub" GE Session 2 - 3D REST CBF Averaging"
+
     fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
+    echo "Finished: "$sub" GE Session 2 - 3D TASK CBF Averaging"
 
     eASL_bolus="1.183,0.682,0.481,0.372,0.303,0.256,0.222"
     eASL_tis="4.199,3.016,2.334,1.853,1.481,1.178,0.922"
     eASL_TRM0=$(jq .RepetitionTime nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.json)
 
     oxford_asl -i eASL_REST/diff.nii.gz -o ./eASL_REST/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_REST/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" GE Session 2 - eASL REST oxford_asl Processing"
 
     oxford_asl -i eASL_TASK/diff.nii.gz -o ./eASL_TASK/ --iaf=diff --ibf=rpt --casl --bolus=$eASL_bolus --tis=$eASL_tis --rpts=1 -c eASL_TASK/M0.nii.gz --tr=$eASL_TRM0 --cmethod=voxel --cgain=32 --alpha=0.6 --fslanat=T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" GE Session 2 - eASL TASK oxford_asl Processing"
 
 # Ing session 1
     cd $datadir"/"$sub"/ing/s1"
@@ -144,14 +157,19 @@ do
     mkdir analysis
 
     fsl_anat -i nifti/MPRAGE.nii.gz -o analysis/T1 
+    echo "Finished: "$sub" Ing Session 1 - fsl_anat"
 
     oxford_asl -i nifti/WIP_SOURCE_-_2dREST_PROD_pCASL-nonorm.nii.gz -o analysis/2D_REST --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASL.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 1 - 2D REST oxford_asl Processing"
 
     oxford_asl -i nifti/WIP_SOURCE_-_2dACT_PROD_pCASL-nonorm.nii.gz -o analysis/2D_TASK --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASLa.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 1 - 2D TASK oxford_asl Processing"
 
     oxford_asl -i nifti/WIP_SOURCE_-_REST_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_REST --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 1 - 3D REST oxford_asl Processing"
 
     oxford_asl -i nifti/SOURCE_-_ACT_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_TASK --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 1 - 3D TASK oxford_asl Processing"
 
 # Ing session 2
     cd $datadir"/"$sub"/ing/s2"
@@ -159,13 +177,21 @@ do
     mkdir analysis
 
     cp -r $datadir"/"$sub"/ge/s1/analysis/T1.anat" $datadir"/"$sub"/ge/s2/analysis"
+    echo "Finished: "$sub" Ing Session 2 - fsl_anat"
 
     oxford_asl -i nifti/WIP_SOURCE_-_2dREST_PROD_pCASL-nonorm.nii.gz -o analysis/2D_REST --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASL.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 2 - 2D REST oxford_asl Processing"
 
     oxford_asl -i nifti/WIP_SOURCE_-_2dACT_PROD_pCASL-nonorm.nii.gz -o analysis/2D_TASK --iaf=ct --ibf=tis --tis=3.6 --casl --bolus=1.8 --rpts=30 --slicedt=0.0415 -c nifti/2dM0_PROD_pCASLa.nii.gz --tr=8 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 2 - 2D TASK oxford_asl Processing"
 
     oxford_asl -i nifti/WIP_SOURCE_-_REST_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_REST --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 2 - 3D REST oxford_asl Processing"
 
     oxford_asl -i nifti/SOURCE_-_ACT_PROD_3D_pCASL_6mm_noNorm.nii.gz -o analysis/3D_TASK --iaf=ct --ibf=tis --tis=3.8 --casl --bolus=1.8 --rpts=8 -c nifti/WIP_SOURCE_-_Mo3d.nii.gz --tr=4.752 --cmethod=voxel --fslanat=analysis/T1.anat --mc --pvcorr 
+    echo "Finished: "$sub" Ing Session 2 - 3D TASK oxford_asl Processing"
+    echo "Finshied: "$sub" - ALL PROCESSING"
 
 done
+
+echo "Finished: ALL SUBJECTS PROCESSING"
