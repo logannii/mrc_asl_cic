@@ -25,12 +25,12 @@ do
     fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_CBF.nii.gz 1 1
     fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 0 1
     fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 1 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 2 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 3 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 4 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 5 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 6 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 7 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_M0.nii.gz 2 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_CBF.nii.gz 3 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_M0.nii.gz 4 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_CBF.nii.gz 5 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_M0.nii.gz 6 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_CBF.nii.gz 7 1
 
     mkdir analysis/3D_TASK
     if (($(fslnvols nifti/3D_Ax_ASL_ACT_5_starts.nii.gz)==2)); then 
@@ -44,12 +44,12 @@ do
     fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_CBF.nii.gz 1 1
     fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 0 1
     fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 1 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 2 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 3 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 4 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 5 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 6 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 7 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_M0.nii.gz 2 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_CBF.nii.gz 3 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_M0.nii.gz 4 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_CBF.nii.gz 5 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_M0.nii.gz 6 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_CBF.nii.gz 7 1
 
     mkdir analysis/eASL_REST
     fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/diff.nii.gz 0 7 
@@ -62,10 +62,10 @@ do
     fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/M0.nii.gz 8 1 
 
     cd ./analysis 
-    fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
+    fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT3_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
     echo "Finished: "$sub" GE Session 1 - 3D REST CBF Averaging"
     
-    fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
+    fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT3_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
     echo "Finished: "$sub" GE Session 1 - 3D TASK CBF Averaging"
 
     eASL_bolus="1.183,0.682,0.481,0.372,0.303,0.256,0.222"
@@ -98,12 +98,12 @@ do
     fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_CBF.nii.gz 1 1
     fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 0 1
     fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 1 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 2 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 3 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 4 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 5 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 6 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 7 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_M0.nii.gz 2 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_CBF.nii.gz 3 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_M0.nii.gz 4 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_CBF.nii.gz 5 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_M0.nii.gz 6 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_CBF.nii.gz 7 1
 
     mkdir analysis/3D_TASK
     if (($(fslnvols nifti/3D_Ax_ASL_ACT_5_starts.nii.gz)==2)); then 
@@ -117,12 +117,12 @@ do
     fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_CBF.nii.gz 1 1
     fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 0 1
     fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 1 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 2 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 3 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 4 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 5 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 6 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 7 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_M0.nii.gz 2 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_CBF.nii.gz 3 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_M0.nii.gz 4 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_CBF.nii.gz 5 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_M0.nii.gz 6 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_CBF.nii.gz 7 1
 
     mkdir analysis/eASL_REST
     fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/diff.nii.gz 0 7 
@@ -135,10 +135,10 @@ do
     fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_ACT_real.nii.gz analysis/eASL_TASK/M0.nii.gz 8 1 
 
     cd ./analysis 
-    fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
+    fslmaths 3D_REST/REPEAT1_CBF.nii.gz -add 3D_REST/REPEAT2_CBF.nii.gz -add 3D_REST/REPEAT3_CBF.nii.gz -add 3D_REST/REPEAT4_CBF.nii.gz -add 3D_REST/REPEAT5_CBF.nii.gz -div 5 3D_REST/AVG_CBF.nii.gz 
     echo "Finished: "$sub" GE Session 2 - 3D REST CBF Averaging"
 
-    fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
+    fslmaths 3D_TASK/REPEAT1_CBF.nii.gz -add 3D_TASK/REPEAT2_CBF.nii.gz -add 3D_TASK/REPEAT3_CBF.nii.gz -add 3D_TASK/REPEAT4_CBF.nii.gz -add 3D_TASK/REPEAT5_CBF.nii.gz -div 5 3D_TASK/AVG_CBF.nii.gz 
     echo "Finished: "$sub" GE Session 2 - 3D TASK CBF Averaging"
 
     eASL_bolus="1.183,0.682,0.481,0.372,0.303,0.256,0.222"
