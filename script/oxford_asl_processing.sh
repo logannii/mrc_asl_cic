@@ -22,16 +22,17 @@ do
         REST_3D_2vol=nifti/3D_Ax_ASL_5_startsa.nii.gz
         REST_3D_8vol=nifti/3D_Ax_ASL_5_starts.nii.gz
     fi
+    # in the image with 2 volumes, M0 precedes CBF; in the image with 8 volumes, CBF precedes M0
     fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_M0.nii.gz 0 1
     fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_CBF.nii.gz 1 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 0 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 1 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_M0.nii.gz 2 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_CBF.nii.gz 3 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_M0.nii.gz 4 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_CBF.nii.gz 5 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_M0.nii.gz 6 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_CBF.nii.gz 7 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 0 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 1 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_CBF.nii.gz 2 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_M0.nii.gz 3 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_CBF.nii.gz 4 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_M0.nii.gz 5 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_CBF.nii.gz 6 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_M0.nii.gz 7 1
 
     mkdir analysis/3D_TASK
     if (($(fslnvols nifti/3D_Ax_ASL_ACT_5_starts.nii.gz)==2)); then 
@@ -41,16 +42,17 @@ do
         TASK_3D_2vol=nifti/3D_Ax_ASL_ACT_5_startsa.nii.gz
         TASK_3D_8vol=nifti/3D_Ax_ASL_ACT_5_starts.nii.gz
     fi
+    # in the image with 2 volumes, M0 precedes CBF; in the image with 8 volumes, CBF precedes M0
     fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_M0.nii.gz 0 1
     fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_CBF.nii.gz 1 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 0 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 1 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_M0.nii.gz 2 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_CBF.nii.gz 3 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_M0.nii.gz 4 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_CBF.nii.gz 5 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_M0.nii.gz 6 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_CBF.nii.gz 7 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 0 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 1 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_CBF.nii.gz 2 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_M0.nii.gz 3 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_CBF.nii.gz 4 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_M0.nii.gz 5 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_CBF.nii.gz 6 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_M0.nii.gz 7 1
 
     mkdir analysis/eASL_REST
     fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/diff.nii.gz 0 7 
@@ -100,16 +102,17 @@ do
         REST_3D_2vol=nifti/3D_Ax_ASL_5_startsa.nii.gz
         REST_3D_8vol=nifti/3D_Ax_ASL_5_starts.nii.gz
     fi
+    # in the image with 2 volumes, M0 precedes CBF; in the image with 8 volumes, CBF precedes M0
     fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_M0.nii.gz 0 1
     fslroi $REST_3D_2vol analysis/3D_REST/REPEAT1_CBF.nii.gz 1 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 0 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 1 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_M0.nii.gz 2 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_CBF.nii.gz 3 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_M0.nii.gz 4 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_CBF.nii.gz 5 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_M0.nii.gz 6 1
-    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_CBF.nii.gz 7 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_CBF.nii.gz 0 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT2_M0.nii.gz 1 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_CBF.nii.gz 2 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT3_M0.nii.gz 3 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_CBF.nii.gz 4 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT4_M0.nii.gz 5 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_CBF.nii.gz 6 1
+    fslroi $REST_3D_8vol analysis/3D_REST/REPEAT5_M0.nii.gz 7 1
 
     mkdir analysis/3D_TASK
     if (($(fslnvols nifti/3D_Ax_ASL_ACT_5_starts.nii.gz)==2)); then 
@@ -119,16 +122,17 @@ do
         TASK_3D_2vol=nifti/3D_Ax_ASL_ACT_5_startsa.nii.gz
         TASK_3D_8vol=nifti/3D_Ax_ASL_ACT_5_starts.nii.gz
     fi
+    # in the image with 2 volumes, M0 precedes CBF; in the image with 8 volumes, CBF precedes M0
     fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_M0.nii.gz 0 1
     fslroi $TASK_3D_2vol analysis/3D_TASK/REPEAT1_CBF.nii.gz 1 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 0 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 1 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_M0.nii.gz 2 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_CBF.nii.gz 3 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_M0.nii.gz 4 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_CBF.nii.gz 5 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_M0.nii.gz 6 1
-    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_CBF.nii.gz 7 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_CBF.nii.gz 0 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT2_M0.nii.gz 1 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_CBF.nii.gz 2 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT3_M0.nii.gz 3 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_CBF.nii.gz 4 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT4_M0.nii.gz 5 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_CBF.nii.gz 6 1
+    fslroi $TASK_3D_8vol analysis/3D_TASK/REPEAT5_M0.nii.gz 7 1
 
     mkdir analysis/eASL_REST
     fslroi nifti/NOT_DIAGNOSTIC_\(Raw\)_eASL_7_delays_real.nii.gz analysis/eASL_REST/diff.nii.gz 0 7 
