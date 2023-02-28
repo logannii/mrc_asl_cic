@@ -196,7 +196,7 @@ do
     mkdir analysis
 
     echo Doing: ${sub} Ing Session 2 - fsl_anat
-    cp -r ${datadir}/${sub}/ge/s1/analysis/T1.anat ${datadir}/${sub}/ge/s2/analysis
+    cp -r ${datadir}/${sub}/ing/s1/analysis/T1.anat ${datadir}/${sub}/ing/s2/analysis
     echo Finished: ${sub} Ing Session 2 - fsl_anat
 
     echo Doing: ${sub} Ing Session 2 - 2D REST oxford_asl Processing
