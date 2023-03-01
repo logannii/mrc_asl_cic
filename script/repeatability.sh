@@ -33,12 +33,12 @@ do
             fslmerge -t ${analysisdir}/3D_${state}/REPEAT_ALL_CBF.nii.gz ${analysisdir}/3D_${state}/REPEAT1_CBF.nii.gz ${analysisdir}/3D_${state}/REPEAT2_CBF.nii.gz ${analysisdir}/3D_${state}/REPEAT3_CBF.nii.gz ${analysisdir}/3D_${state}/REPEAT4_CBF.nii.gz ${analysisdir}/3D_${state}/REPEAT5_CBF.nii.gz
             mcflirt -in ${analysisdir}/3D_${state}/REPEAT_ALL_CBF.nii.gz -out ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt.nii.gz -report >> ${outputdir}/log_repeatability.txt
             fslmaths ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt.nii.gz -Tmean ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt_mean.nii.gz
-            bet ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt_mean.nii.gz ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt_mean_BETed.nii.gz
+            bet ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt_mean.nii.gz ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt_mean_BETed.nii.gz -m
             # Motion correction and BET on 5 M0 repeats
             fslmerge -t ${analysisdir}/3D_${state}/REPEAT_ALL_M0.nii.gz ${analysisdir}/3D_${state}/REPEAT1_M0.nii.gz ${analysisdir}/3D_${state}/REPEAT2_M0.nii.gz ${analysisdir}/3D_${state}/REPEAT3_M0.nii.gz ${analysisdir}/3D_${state}/REPEAT4_M0.nii.gz ${analysisdir}/3D_${state}/REPEAT5_M0.nii.gz
             mcflirt -in ${analysisdir}/3D_${state}/REPEAT_ALL_M0.nii.gz -out ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt.nii.gz -report >> ${outputdir}/log_repeatability.txt
             fslmaths ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt.nii.gz -Tmean ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt_mean.nii.gz
-            bet ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt_mean.nii.gz ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt_mean_BETed.nii.gz
+            bet ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt_mean.nii.gz ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt_mean_BETed.nii.gz -m
             # Copy the MCed and BETed images to the repeatability sub folder
             cp ${analysisdir}/3D_${state}/REPEAT_ALL_CBF_mcflirt_mean_BETed.nii.gz ${targetdir}/cbf_wb_nopvc.nii.gz
             cp ${analysisdir}/3D_${state}/REPEAT_ALL_M0_mcflirt_mean_BETed.nii.gz ${targetdir}/m0.nii.gz
