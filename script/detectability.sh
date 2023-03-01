@@ -9,94 +9,30 @@ cd ${datadir}/detectability
 
 mkdir subALL
 
-str_ge_3D_s1_cbf_wb_nopvc=" "
-str_ge_3D_s2_cbf_wb_nopvc=" "
-str_ge_3D_sALL_cbf_wb_nopvc=" "
-str_ge_eASL_s1_cbf_wb_nopvc=" "
-str_ge_eASL_s2_cbf_wb_nopvc=" "
-str_ge_eASL_sALL_cbf_wb_nopvc=" "
-str_ge_eASL_s1_cbf_wb_pvc=" "
-str_ge_eASL_s2_cbf_wb_pvc=" "
-str_ge_eASL_sALL_cbf_wb_pvc=" "
-str_ing_2D_s1_cbf_wb_nopvc=" "
-str_ing_2D_s2_cbf_wb_nopvc=" "
-str_ing_2D_sALL_cbf_wb_nopvc=" "
-str_ing_2D_s1_cbf_wb_pvc=" "
-str_ing_2D_s2_cbf_wb_pvc=" "
-str_ing_2D_sALL_cbf_wb_pvc=" "
-str_ing_3D_s1_cbf_wb_nopvc=" "
-str_ing_3D_s2_cbf_wb_nopvc=" "
-str_ing_3D_sALL_cbf_wb_nopvc=" "
-str_ing_3D_s1_cbf_wb_pvc=" "
-str_ing_3D_s2_cbf_wb_pvc=" "
-str_ing_3D_sALL_cbf_wb_pvc=" "
+fslmerge -t subALL/ge_3D_s1_cbf_wb_nopvc $(ls ${datadir}/repeatability/results/*/ge_3D_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_3D_s1_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ge_3D_s2_cbf_wb_nopvc $(ls ${datadir}/repeatability/results/*/ge_3D_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_3D_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ge_3D_sALL_cbf_wb_nopvc $(ls ${datadir}/repeatability/results/*/ge_3D_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_3D_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_3D_s1_TASK/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_3D_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
 
-for state in "REST" "TASK"
-do 
-    for session in "s1" "s2"
-    do 
-        for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07"
-        do
-            if [ "$session" = "s1" ]; then
-                str_ge_3D_s1_cbf_wb_nopvc="${str_ge_3D_s1_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_3D_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_3D_sALL_cbf_wb_nopvc="${str_ge_3D_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_3D_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_eASL_s1_cbf_wb_nopvc="${str_ge_eASL_s1_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_eASL_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_eASL_sALL_cbf_wb_nopvc="${str_ge_eASL_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_eASL_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_eASL_s1_cbf_wb_pvc="${str_ge_eASL_s1_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ge_eASL_s1_${state}/cbf_wb_pvc.nii.gz "
-                str_ge_eASL_sALL_cbf_wb_pvc="${str_ge_eASL_sALL_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ge_eASL_s1_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_2D_s1_cbf_wb_nopvc="${str_ing_2D_s1_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_2D_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_2D_sALL_cbf_wb_nopvc="${str_ing_2D_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_2D_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_2D_s1_cbf_wb_pvc="${str_ing_2D_s1_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_2D_s1_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_2D_sALL_cbf_wb_pvc="${str_ing_2D_sALL_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_2D_s1_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_3D_s1_cbf_wb_nopvc="${str_ing_3D_s1_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_3D_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_3D_sALL_cbf_wb_nopvc="${str_ing_3D_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_3D_s1_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_3D_s1_cbf_wb_pvc="${str_ing_3D_s1_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_3D_s1_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_3D_sALL_cbf_wb_pvc="${str_ing_3D_sALL_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_3D_s1_${state}/cbf_wb_pvc.nii.gz "
-            elif [ "$session" = "s2" ]; then
-                str_ge_3D_s2_cbf_wb_nopvc="${str_ge_3D_s2_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_3D_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_3D_sALL_cbf_wb_nopvc="${str_ge_3D_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_3D_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_eASL_s2_cbf_wb_nopvc="${str_ge_eASL_s2_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_eASL_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_eASL_sALL_cbf_wb_nopvc="${str_ge_eASL_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ge_eASL_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ge_eASL_s2_cbf_wb_pvc="${str_ge_eASL_s2_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ge_eASL_s2_${state}/cbf_wb_pvc.nii.gz "
-                str_ge_eASL_sALL_cbf_wb_pvc="${str_ge_eASL_sALL_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ge_eASL_s2_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_2D_s2_cbf_wb_nopvc="${str_ing_2D_s2_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_2D_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_2D_sALL_cbf_wb_nopvc="${str_ing_2D_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_2D_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_2D_s2_cbf_wb_pvc="${str_ing_2D_s2_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_2D_s2_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_2D_sALL_cbf_wb_pvc="${str_ing_2D_sALL_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_2D_s2_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_3D_s2_cbf_wb_nopvc="${str_ing_3D_s2_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_3D_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_3D_sALL_cbf_wb_nopvc="${str_ing_3D_sALL_cbf_wb_nopvc}${datadir}/repeatability/results/${sub}/ing_3D_s2_${state}/cbf_wb_nopvc.nii.gz "
-                str_ing_3D_s2_cbf_wb_pvc="${str_ing_3D_s2_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_3D_s2_${state}/cbf_wb_pvc.nii.gz "
-                str_ing_3D_sALL_cbf_wb_pvc="${str_ing_3D_sALL_cbf_wb_pvc}${datadir}/repeatability/results/${sub}/ing_3D_s2_${state}/cbf_wb_pvc.nii.gz "
-            fi
-        done # for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07"
-    done # for session in "s1" "s2"
-done # for state in "REST" "TASK"
+fslmerge -t subALL/ge_eASL_s1_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ge_eASL_s2_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ge_eASL_sALL_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_TASK/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ge_eASL_s1_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_TASK/cbf_wb_pvc_mni.nii.gz) 
+fslmerge -t subALL/ge_eASL_s2_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_TASK/cbf_wb_pvc_mni.nii.gz) 
+fslmerge -t subALL/ge_eASL_sALL_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s1_TASK/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ge_eASL_s2_TASK/cbf_wb_pvc_mni.nii.gz) 
 
+fslmerge -t subALL/ing_2D_s1_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_2D_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s1_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ing_2D_s2_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_2D_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ing_2D_sALL_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_2D_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s1_TASK/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ing_2D_s1_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_2D_s1_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s1_TASK/cbf_wb_pvc_mni.nii.gz) 
+fslmerge -t subALL/ing_2D_s2_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_2D_s2_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s2_TASK/cbf_wb_pvc_mni.nii.gz) 
+fslmerge -t subALL/ing_2D_sALL_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_2D_s1_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s2_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s1_TASK/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_2D_s2_TASK/cbf_wb_pvc_mni.nii.gz) 
 
-fslmerge -t subALL/ge_3D_s1_cbf_wb_nopvc.nii.gz ${str_ge_3D_s1_cbf_wb_nopvc}
-fslmerge -t subALL/ge_3D_s2_cbf_wb_nopvc.nii.gz ${str_ge_3D_s2_cbf_wb_nopvc}
-fslmerge -t subALL/ge_3D_sALL_cbf_wb_nopvc.nii.gz ${str_ge_3D_sALL_cbf_wb_nopvc}
-
-fslmerge -t subALL/ge_eASL_s1_cbf_wb_nopvc.nii.gz ${str_ge_eASL_s1_cbf_wb_nopvc}
-fslmerge -t subALL/ge_eASL_s2_cbf_wb_nopvc.nii.gz ${str_ge_eASL_s2_cbf_wb_nopvc}
-fslmerge -t subALL/ge_eASL_sALL_cbf_wb_nopvc.nii.gz ${str_ge_eASL_sALL_cbf_wb_nopvc}
-fslmerge -t subALL/ge_eASL_s1_cbf_wb_pvc.nii.gz ${str_ge_eASL_s1_cbf_wb_pvc}
-fslmerge -t subALL/ge_eASL_s2_cbf_wb_pvc.nii.gz ${str_ge_eASL_s2_cbf_wb_pvc}
-fslmerge -t subALL/ge_eASL_sALL_cbf_wb_pvc.nii.gz ${str_ge_eASL_sALL_cbf_wb_pvc}
-
-fslmerge -t subALL/ing_2D_s1_cbf_wb_nopvc.nii.gz ${str_ing_2D_s1_cbf_wb_nopvc}
-fslmerge -t subALL/ing_2D_s2_cbf_wb_nopvc.nii.gz ${str_ing_2D_s2_cbf_wb_nopvc}
-fslmerge -t subALL/ing_2D_sALL_cbf_wb_nopvc.nii.gz ${str_ing_2D_sALL_cbf_wb_nopvc}
-fslmerge -t subALL/ing_2D_s1_cbf_wb_pvc.nii.gz ${str_ing_2D_s1_cbf_wb_pvc}
-fslmerge -t subALL/ing_2D_s2_cbf_wb_pvc.nii.gz ${str_ing_2D_s2_cbf_wb_pvc}
-fslmerge -t subALL/ing_2D_sALL_cbf_wb_pvc.nii.gz ${str_ing_2D_sALL_cbf_wb_pvc}
-
-fslmerge -t subALL/ing_3D_s1_cbf_wb_nopvc.nii.gz ${str_ing_3D_s1_cbf_wb_nopvc}
-fslmerge -t subALL/ing_3D_s2_cbf_wb_nopvc.nii.gz ${str_ing_3D_s2_cbf_wb_nopvc}
-fslmerge -t subALL/ing_3D_sALL_cbf_wb_nopvc.nii.gz ${str_ing_3D_sALL_cbf_wb_nopvc}
-fslmerge -t subALL/ing_3D_s1_cbf_wb_pvc.nii.gz ${str_ing_3D_s1_cbf_wb_pvc}
-fslmerge -t subALL/ing_3D_s2_cbf_wb_pvc.nii.gz ${str_ing_3D_s2_cbf_wb_pvc}
-fslmerge -t subALL/ing_3D_sALL_cbf_wb_pvc.nii.gz ${str_ing_3D_sALL_cbf_wb_pvc}
+fslmerge -t subALL/ing_3D_s1_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_3D_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s1_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ing_3D_s2_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_3D_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ing_3D_sALL_cbf_wb_nopvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_3D_s1_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s2_REST/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s1_TASK/cbf_wb_nopvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s2_TASK/cbf_wb_nopvc_mni.nii.gz) 
+fslmerge -t subALL/ing_3D_s1_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_3D_s1_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s1_TASK/cbf_wb_pvc_mni.nii.gz) 
+fslmerge -t subALL/ing_3D_s2_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_3D_s2_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s2_TASK/cbf_wb_pvc_mni.nii.gz) 
+fslmerge -t subALL/ing_3D_sALL_cbf_wb_pvc.nii.gz $(ls ${datadir}/repeatability/results/*/ing_3D_s1_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s2_REST/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s1_TASK/cbf_wb_pvc_mni.nii.gz) $(ls ${datadir}/repeatability/results/*/ing_3D_s2_TASK/cbf_wb_pvc_mni.nii.gz) 
 
 mkdir design
 for state in "REST" "TASK"
