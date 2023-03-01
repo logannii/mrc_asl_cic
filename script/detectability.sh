@@ -102,7 +102,7 @@ mkdir randomiseout
 # GE 3D Protocol
 flameo --cope=subALL/ge_3D_s1_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ge_3D_s1_nopvc 
 mkdir randomiseout/ge_3D_s1_nopvc 
-randomise -i subALL/ge_3D_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ge_3D_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_3D_s1_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_3D_s1_nopvc 
 mv r_tstat2.nii.gz randomiseout/ge_3D_s1_nopvc 
@@ -110,7 +110,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_3D_s1_nopvc
 
 flameo --cope=subALL/ge_3D_s2_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ge_3D_s2_nopvc 
 mkdir randomiseout/ge_3D_s2_nopvc 
-randomise -i subALL/ge_3D_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ge_3D_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_3D_s2_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_3D_s2_nopvc 
 mv r_tstat2.nii.gz randomiseout/ge_3D_s2_nopvc 
@@ -118,7 +118,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_3D_s2_nopvc
 
 flameo --cope=subALL/ge_3D_sALL_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design_all.mat --tc=design/design_all.con --cs=design/design_all.grp --runmode=ols --ld=flameout/ge_3D_sALL_nopvc 
 mkdir randomiseout/ge_3D_sALL_nopvc 
-randomise -i subALL/ge_3D_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T 
+randomise -i subALL/ge_3D_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_3D_sALL_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_3D_sALL_nopvc 
 mv r_tstat2.nii.gz randomiseout/ge_3D_sALL_nopvc 
@@ -127,7 +127,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_3D_sALL_nopvc
 # GE eASL Protocol 
 flameo --cope=subALL/ge_eASL_s1_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ge_eASL_s1_nopvc 
 mkdir randomiseout/ge_eASL_s1_nopvc 
-randomise -i subALL/ge_eASL_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ge_eASL_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_eASL_s1_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_eASL_s1_nopvc 
 mv r_tstat2.nii.gz randomiseout/ge_eASL_s1_nopvc 
@@ -135,7 +135,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_eASL_s1_nopvc
 
 flameo --cope=subALL/ge_eASL_s1_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ge_eASL_s1_pvc 
 mkdir randomiseout/ge_eASL_s1_pvc 
-randomise -i subALL/ge_eASL_s1_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ge_eASL_s1_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_eASL_s1_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_eASL_s1_pvc 
 mv r_tstat2.nii.gz randomiseout/ge_eASL_s1_pvc 
@@ -143,7 +143,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_eASL_s1_pvc
 
 flameo --cope=subALL/ge_eASL_s2_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ge_eASL_s2_nopvc 
 mkdir randomiseout/ge_eASL_s2_nopvc 
-randomise -i subALL/ge_eASL_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ge_eASL_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_eASL_s2_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_eASL_s2_nopvc 
 mv r_tstat2.nii.gz randomiseout/ge_eASL_s2_nopvc 
@@ -151,7 +151,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_eASL_s2_nopvc
 
 flameo --cope=subALL/ge_eASL_s2_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ge_eASL_s2_pvc 
 mkdir randomiseout/ge_eASL_s2_pvc 
-randomise -i subALL/ge_eASL_s2_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ge_eASL_s2_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_eASL_s2_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_eASL_s2_pvc 
 mv r_tstat2.nii.gz randomiseout/ge_eASL_s2_pvc 
@@ -159,7 +159,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_eASL_s2_pvc
 
 flameo --cope=subALL/ge_eASL_sALL_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design_all.mat --tc=design/design_all.con --cs=design/design_all.grp --runmode=ols --ld=flameout/ge_eASL_sALL_nopvc 
 mkdir randomiseout/ge_eASL_sALL_nopvc 
-randomise -i subALL/ge_eASL_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T 
+randomise -i subALL/ge_eASL_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_eASL_sALL_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_eASL_sALL_nopvc 
 mv r_tstat2.nii.gz randomiseout/ge_eASL_sALL_nopvc 
@@ -167,7 +167,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_eASL_sALL_nopvc
 
 flameo --cope=subALL/ge_eASL_sALL_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design_all.mat --tc=design/design_all.con --cs=design/design_all.grp --runmode=ols --ld=flameout/ge_eASL_sALL_pvc 
 mkdir randomiseout/ge_eASL_sALL_pvc 
-randomise -i subALL/ge_eASL_sALL_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T 
+randomise -i subALL/ge_eASL_sALL_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ge_eASL_sALL_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ge_eASL_sALL_pvc 
 mv r_tstat2.nii.gz randomiseout/ge_eASL_sALL_pvc 
@@ -176,7 +176,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ge_eASL_sALL_pvc
 # Ing 2D Protocol 
 flameo --cope=subALL/ing_2D_s1_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_2D_s1_nopvc 
 mkdir randomiseout/ing_2D_s1_nopvc 
-randomise -i subALL/ing_2D_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_2D_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_2D_s1_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_2D_s1_nopvc 
 mv r_tstat2.nii.gz randomiseout/ing_2D_s1_nopvc 
@@ -184,7 +184,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_2D_s1_nopvc
 
 flameo --cope=subALL/ing_2D_s1_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_2D_s1_pvc 
 mkdir randomiseout/ing_2D_s1_pvc 
-randomise -i subALL/ing_2D_s1_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_2D_s1_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_2D_s1_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_2D_s1_pvc 
 mv r_tstat2.nii.gz randomiseout/ing_2D_s1_pvc 
@@ -192,7 +192,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_2D_s1_pvc
 
 flameo --cope=subALL/ing_2D_s2_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_2D_s2_nopvc 
 mkdir randomiseout/ing_2D_s2_nopvc 
-randomise -i subALL/ing_2D_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_2D_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_2D_s2_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_2D_s2_nopvc 
 mv r_tstat2.nii.gz randomiseout/ing_2D_s2_nopvc 
@@ -200,7 +200,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_2D_s2_nopvc
 
 flameo --cope=subALL/ing_2D_s2_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_2D_s2_pvc 
 mkdir randomiseout/ing_2D_s2_pvc 
-randomise -i subALL/ing_2D_s2_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_2D_s2_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_2D_s2_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_2D_s2_pvc 
 mv r_tstat2.nii.gz randomiseout/ing_2D_s2_pvc 
@@ -208,7 +208,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_2D_s2_pvc
 
 flameo --cope=subALL/ing_2D_sALL_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design_all.mat --tc=design/design_all.con --cs=design/design_all.grp --runmode=ols --ld=flameout/ing_2D_sALL_nopvc 
 mkdir randomiseout/ing_2D_sALL_nopvc 
-randomise -i subALL/ing_2D_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T 
+randomise -i subALL/ing_2D_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_2D_sALL_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_2D_sALL_nopvc 
 mv r_tstat2.nii.gz randomiseout/ing_2D_sALL_nopvc 
@@ -216,7 +216,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_2D_sALL_nopvc
 
 flameo --cope=subALL/ing_2D_sALL_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design_all.mat --tc=design/design_all.con --cs=design/design_all.grp --runmode=ols --ld=flameout/ing_2D_sALL_pvc 
 mkdir randomiseout/ing_2D_sALL_pvc 
-randomise -i subALL/ing_2D_sALL_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T 
+randomise -i subALL/ing_2D_sALL_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_2D_sALL_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_2D_sALL_pvc 
 mv r_tstat2.nii.gz randomiseout/ing_2D_sALL_pvc 
@@ -225,7 +225,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_2D_sALL_pvc
 # Ing 3D Protocol
 flameo --cope=subALL/ing_3D_s1_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_3D_s1_nopvc 
 mkdir randomiseout/ing_3D_s1_nopvc 
-randomise -i subALL/ing_3D_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_3D_s1_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_3D_s1_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_3D_s1_nopvc 
 mv r_tstat2.nii.gz randomiseout/ing_3D_s1_nopvc 
@@ -233,7 +233,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_3D_s1_nopvc
 
 flameo --cope=subALL/ing_3D_s1_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_3D_s1_pvc 
 mkdir randomiseout/ing_3D_s1_pvc 
-randomise -i subALL/ing_3D_s1_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_3D_s1_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_3D_s1_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_3D_s1_pvc 
 mv r_tstat2.nii.gz randomiseout/ing_3D_s1_pvc 
@@ -241,7 +241,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_3D_s1_pvc
 
 flameo --cope=subALL/ing_3D_s2_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_3D_s2_nopvc 
 mkdir randomiseout/ing_3D_s2_nopvc 
-randomise -i subALL/ing_3D_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_3D_s2_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_3D_s2_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_3D_s2_nopvc 
 mv r_tstat2.nii.gz randomiseout/ing_3D_s2_nopvc 
@@ -249,7 +249,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_3D_s2_nopvc
 
 flameo --cope=subALL/ing_3D_s2_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design.mat --tc=design/design.con --cs=design/design.grp --runmode=ols --ld=flameout/ing_3D_s2_pvc 
 mkdir randomiseout/ing_3D_s2_pvc 
-randomise -i subALL/ing_3D_s2_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T 
+randomise -i subALL/ing_3D_s2_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design.mat -t design/design.con -e design/design.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_3D_s2_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_3D_s2_pvc 
 mv r_tstat2.nii.gz randomiseout/ing_3D_s2_pvc 
@@ -257,7 +257,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_3D_s2_pvc
 
 flameo --cope=subALL/ing_3D_sALL_cbf_wb_nopvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design_all.mat --tc=design/design_all.con --cs=design/design_all.grp --runmode=ols --ld=flameout/ing_3D_sALL_nopvc 
 mkdir randomiseout/ing_3D_sALL_nopvc 
-randomise -i subALL/ing_3D_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T 
+randomise -i subALL/ing_3D_sALL_cbf_wb_nopvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_3D_sALL_nopvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_3D_sALL_nopvc 
 mv r_tstat2.nii.gz randomiseout/ing_3D_sALL_nopvc 
@@ -265,7 +265,7 @@ mv r_tfce_corrp_tstat2.nii.gz randomiseout/ing_3D_sALL_nopvc
 
 flameo --cope=subALL/ing_3D_sALL_cbf_wb_pvc.nii.gz --mask=${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz --dm=design/design_all.mat --tc=design/design_all.con --cs=design/design_all.grp --runmode=ols --ld=flameout/ing_3D_sALL_pvc 
 mkdir randomiseout/ing_3D_sALL_pvc 
-randomise -i subALL/ing_3D_sALL_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T 
+randomise -i subALL/ing_3D_sALL_cbf_wb_pvc.nii.gz -o r -m ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz -d design/design_all.mat -t design/design_all.con -e design/design_all.grp -T -n 1000
 mv r_tstat1.nii.gz randomiseout/ing_3D_sALL_pvc 
 mv r_tfce_corrp_tstat1.nii.gz randomiseout/ing_3D_sALL_pvc 
 mv r_tstat2.nii.gz randomiseout/ing_3D_sALL_pvc 
