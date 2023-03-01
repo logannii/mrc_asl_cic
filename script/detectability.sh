@@ -38,13 +38,17 @@ mkdir design
 for state in "REST" "TASK"
 do 
     contrast=""
+    contrast_all=""
     if [ "$state" = "REST" ]; then
         contrast="${contrast}-1 "
+        contrast_all="${contrast_all}-1 0 "
     elif [ "$state" = "TASK" ]; then
         contrast="${contrast}1 "
+        contrast_all="${contrast_all}1 0 "
     fi
-    for subno in 1 2 3 4 5 6 7 ; do contrast="${contrast}0 " ; done
+    for subno in 1 2 3 4 5 6 7 ; do contrast="${contrast}0 " ; contrast_all="${contrast_all}0 " ; done
     echo $contrast >> design/contrast.txt
+    echo $contrast_all >> design/contrast_all.txt
     for session in "s1" "s2"
     do 
         i=0
@@ -94,7 +98,7 @@ Text2Vest design/design_all.txt design/design_all.mat
 Text2Vest design/group.txt design/design.grp
 Text2Vest design/group_all.txt design/design_all.grp
 Text2Vest design/contrast.txt design/design.con
-Text2Vest design/contrast.txt design/design_all.con
+Text2Vest design/contrast_all.txt design/design_all.con
 
 mkdir flameout 
 mkdir randomiseout 
