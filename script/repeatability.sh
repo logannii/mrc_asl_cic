@@ -15,7 +15,7 @@ mkdir repeatability
 cd ${datadir}/repeatability
 mkdir results
 
-for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07"
+for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07" "sub08" "sub09" "sub10" 
 do
     mkdir results/${sub}
 
@@ -244,4 +244,4 @@ do
         
     done # for session in "s1" "s2"
 
-done # for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07"
+done # for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07" "sub08" "sub09" "sub10" 
