@@ -1,7 +1,8 @@
 #!/usr/bin/zsh
 
-datadir=/Users/xinzhang/Downloads/mrc_asl_cic/data
-outputdir=/Users/xinzhang/Downloads/mrc_asl_cic/output
+# rootdir=/Users/xinzhang/Downloads/mrc_asl_cic
+datadir=$rootdir/data
+outputdir=$rootdir/output
 
 for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07" "sub08" "sub09" "sub10" 
 do
@@ -11,6 +12,7 @@ do
     mkdir analysis
 
     echo Doing: ${sub} GE Session 1 - fsl_anat
+    # Do fsl_anat on structural image
     fsl_anat -i nifti/3D_SAG_T1_MP-RAGE_TI800.nii.gz -o analysis/T1 >> ${outputdir}/log_oxford_asl_processing_${sub}.txt
     echo Finished: ${sub} GE Session 1 - fsl_anat
 
@@ -228,7 +230,7 @@ do
     echo Doing: ${sub} Ing Session 1 - 2D_REST CSF calibration
     mkdir calib_csf/2D_REST
     cp ./2D_REST/native_space/perfusion.nii.gz ./calib_cbf/2D_REST/perfusion.nii.gz 
-    asl_calib -i calib_csf/2D_REST/perfusion.nii.gz -o calib_csf/2D_REST -c ../nifti/2dM0_PROD_pCASL.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 2D_REST/native_space/asl2struct.mat --tr $eASL_TRM0 --cgain 32 --alpha 0.6
+    asl_calib -i calib_csf/2D_REST/perfusion.nii.gz -o calib_csf/2D_REST -c ../nifti/2dM0_PROD_pCASL.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 2D_REST/native_space/asl2struct.mat --tr=8
     for space in "native_space" "struct_space" "std_space"
     do 
         fslmaths 2D_REST/${space}/perfusion.nii.gz -div $(<./calib_csf/2D_REST/M0.txt) -mul 6000 2D_REST/${space}/perfusion_calib_csf.nii.gz 
@@ -237,10 +239,22 @@ do
     done
     echo Finished: ${sub} Ing Session 1 - 2D_REST CSF calibration
 
+    echo Doing: ${sub} Ing Session 1 - 2D_TASK CSF calibration
+    mkdir calib_csf/2D_TASK
+    cp ./2D_TASK/native_space/perfusion.nii.gz ./calib_cbf/2D_TASK/perfusion.nii.gz 
+    asl_calib -i calib_csf/2D_TASK/perfusion.nii.gz -o calib_csf/2D_TASK -c ../nifti/2dM0_PROD_pCASLa.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 2D_TASK/native_space/asl2struct.mat --tr=8
+    for space in "native_space" "struct_space" "std_space"
+    do 
+        fslmaths 2D_TASK/${space}/perfusion.nii.gz -div $(<./calib_csf/2D_TASK/M0.txt) -mul 6000 2D_TASK/${space}/perfusion_calib_csf.nii.gz 
+        fslmaths 2D_TASK/${space}/pvcorr/perfusion.nii.gz -div $(<./calib_csf/2D_TASK/M0.txt) -mul 6000 2D_TASK/${space}/pvcorr/perfusion_calib_csf.nii.gz 
+        fslmaths 2D_TASK/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/2D_TASK/M0.txt) -mul 6000 2D_TASK/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
+    done
+    echo Finished: ${sub} Ing Session 1 - 2D_TASK CSF calibration
+
     echo Doing: ${sub} Ing Session 1 - 3D_REST CSF calibration
     mkdir calib_csf/3D_REST
     cp ./3D_REST/native_space/perfusion.nii.gz ./calib_cbf/3D_REST/perfusion.nii.gz 
-    asl_calib -i calib_csf/3D_REST/perfusion.nii.gz -o calib_csf/3D_REST -c ../nifti/2dM0_PROD_pCASLa.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 3D_REST/native_space/asl2struct.mat --tr $eASL_TRM0 --cgain 32 --alpha 0.6
+    asl_calib -i calib_csf/3D_REST/perfusion.nii.gz -o calib_csf/3D_REST -c ../nifti/WIP_SOURCE_-_Mo3d.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 3D_REST/native_space/asl2struct.mat --tr=4.752
     for space in "native_space" "struct_space" "std_space"
     do 
         fslmaths 3D_REST/${space}/perfusion.nii.gz -div $(<./calib_csf/3D_REST/M0.txt) -mul 6000 3D_REST/${space}/perfusion_calib_csf.nii.gz 
@@ -248,6 +262,18 @@ do
         fslmaths 3D_REST/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/3D_REST/M0.txt) -mul 6000 3D_REST/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
     done
     echo Finished: ${sub} Ing Session 1 - 3D_REST CSF calibration
+
+    echo Doing: ${sub} Ing Session 1 - 3D_TASK CSF calibration
+    mkdir calib_csf/3D_TASK
+    cp ./3D_TASK/native_space/perfusion.nii.gz ./calib_cbf/3D_TASK/perfusion.nii.gz 
+    asl_calib -i calib_csf/3D_TASK/perfusion.nii.gz -o calib_csf/3D_TASK -c ../nifti/WIP_SOURCE_-_Mo3d.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 3D_TASK/native_space/asl2struct.mat --tr=4.752
+    for space in "native_space" "struct_space" "std_space"
+    do 
+        fslmaths 3D_TASK/${space}/perfusion.nii.gz -div $(<./calib_csf/3D_TASK/M0.txt) -mul 6000 3D_TASK/${space}/perfusion_calib_csf.nii.gz 
+        fslmaths 3D_TASK/${space}/pvcorr/perfusion.nii.gz -div $(<./calib_csf/3D_TASK/M0.txt) -mul 6000 3D_TASK/${space}/pvcorr/perfusion_calib_csf.nii.gz 
+        fslmaths 3D_TASK/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/3D_TASK/M0.txt) -mul 6000 3D_TASK/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
+    done
+    echo Finished: ${sub} Ing Session 1 - 3D_TASK CSF calibration
 
 # Ing session 2
     cd ${datadir}/${sub}/ing/s2
@@ -275,20 +301,53 @@ do
     echo Finished: ${sub} Ing Session 2 - 3D TASK oxford_asl Processing
 
     mkdir calib_csf
-    for state in "3D_REST" "3D_TASK"
+    echo Doing: ${sub} Ing Session 2 - 2D_REST CSF calibration
+    mkdir calib_csf/2D_REST
+    cp ./2D_REST/native_space/perfusion.nii.gz ./calib_cbf/2D_REST/perfusion.nii.gz 
+    asl_calib -i calib_csf/2D_REST/perfusion.nii.gz -o calib_csf/2D_REST -c ../nifti/2dM0_PROD_pCASL.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 2D_REST/native_space/asl2struct.mat --tr=8
+    for space in "native_space" "struct_space" "std_space"
     do 
-        echo Doing: ${sub} Ing Session 2 - ${state} CSF calibration
-        mkdir calib_csf/${state}
-        cp ./${state}/native_space/perfusion.nii.gz ./calib_cbf/${state}/perfusion.nii.gz 
-        asl_calib -i ${state}/native_space/perfusion.nii.gz -o calib_csf/${state} -c ../nifti/WIP_SOURCE_-_Mo3d.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t ${state}/native_space/asl2struct.mat --tr 4.752
-        for space in "native_space" "struct_space" "std_space"
-        do 
-            fslmaths ${state}/${space}/perfusion.nii.gz -div $(<./calib_csf/${state}/M0.txt) -mul 6000 ${state}/${space}/perfusion_calib_csf.nii.gz 
-            fslmaths ${state}/${space}/pvcorr/perfusion.nii.gz -div $(<./calib_csf/${state}/M0.txt) -mul 6000 ${state}/${space}/pvcorr/perfusion_calib_csf.nii.gz 
-            fslmaths ${state}/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/${state}/M0.txt) -mul 6000 ${state}/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
-        done
-    echo Finished: ${sub} Ing Session 2 - ${state} CSF calibration
+        fslmaths 2D_REST/${space}/perfusion.nii.gz -div $(<./calib_csf/2D_REST/M0.txt) -mul 6000 2D_REST/${space}/perfusion_calib_csf.nii.gz 
+        fslmaths 2D_REST/${space}/pvcorr/perfusion.nii.gz -div $(<./calib_csf/2D_REST/M0.txt) -mul 6000 2D_REST/${space}/pvcorr/perfusion_calib_csf.nii.gz 
+        fslmaths 2D_REST/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/2D_REST/M0.txt) -mul 6000 2D_REST/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
     done
+    echo Finished: ${sub} Ing Session 2 - 2D_REST CSF calibration
+
+    echo Doing: ${sub} Ing Session 2 - 2D_TASK CSF calibration
+    mkdir calib_csf/2D_TASK
+    cp ./2D_TASK/native_space/perfusion.nii.gz ./calib_cbf/2D_TASK/perfusion.nii.gz 
+    asl_calib -i calib_csf/2D_TASK/perfusion.nii.gz -o calib_csf/2D_TASK -c ../nifti/2dM0_PROD_pCASLa.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 2D_TASK/native_space/asl2struct.mat --tr=8
+    for space in "native_space" "struct_space" "std_space"
+    do 
+        fslmaths 2D_TASK/${space}/perfusion.nii.gz -div $(<./calib_csf/2D_TASK/M0.txt) -mul 6000 2D_TASK/${space}/perfusion_calib_csf.nii.gz 
+        fslmaths 2D_TASK/${space}/pvcorr/perfusion.nii.gz -div $(<./calib_csf/2D_TASK/M0.txt) -mul 6000 2D_TASK/${space}/pvcorr/perfusion_calib_csf.nii.gz 
+        fslmaths 2D_TASK/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/2D_TASK/M0.txt) -mul 6000 2D_TASK/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
+    done
+    echo Finished: ${sub} Ing Session 2 - 2D_TASK CSF calibration
+
+    echo Doing: ${sub} Ing Session 2 - 3D_REST CSF calibration
+    mkdir calib_csf/3D_REST
+    cp ./3D_REST/native_space/perfusion.nii.gz ./calib_cbf/3D_REST/perfusion.nii.gz 
+    asl_calib -i calib_csf/3D_REST/perfusion.nii.gz -o calib_csf/3D_REST -c ../nifti/WIP_SOURCE_-_Mo3d.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 3D_REST/native_space/asl2struct.mat --tr=4.752
+    for space in "native_space" "struct_space" "std_space"
+    do 
+        fslmaths 3D_REST/${space}/perfusion.nii.gz -div $(<./calib_csf/3D_REST/M0.txt) -mul 6000 3D_REST/${space}/perfusion_calib_csf.nii.gz 
+        fslmaths 3D_REST/${space}/pvcorr/perfusion.nii.gz -div $(<./calib_csf/3D_REST/M0.txt) -mul 6000 3D_REST/${space}/pvcorr/perfusion_calib_csf.nii.gz 
+        fslmaths 3D_REST/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/3D_REST/M0.txt) -mul 6000 3D_REST/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
+    done
+    echo Finished: ${sub} Ing Session 2 - 3D_REST CSF calibration
+
+    echo Doing: ${sub} Ing Session 2 - 3D_TASK CSF calibration
+    mkdir calib_csf/3D_TASK
+    cp ./3D_TASK/native_space/perfusion.nii.gz ./calib_cbf/3D_TASK/perfusion.nii.gz 
+    asl_calib -i calib_csf/3D_TASK/perfusion.nii.gz -o calib_csf/3D_TASK -c ../nifti/WIP_SOURCE_-_Mo3d.nii.gz -s T1.anat/T1_biascorr_brain.nii.gz -t 3D_TASK/native_space/asl2struct.mat --tr=4.752
+    for space in "native_space" "struct_space" "std_space"
+    do 
+        fslmaths 3D_TASK/${space}/perfusion.nii.gz -div $(<./calib_csf/3D_TASK/M0.txt) -mul 6000 3D_TASK/${space}/perfusion_calib_csf.nii.gz 
+        fslmaths 3D_TASK/${space}/pvcorr/perfusion.nii.gz -div $(<./calib_csf/3D_TASK/M0.txt) -mul 6000 3D_TASK/${space}/pvcorr/perfusion_calib_csf.nii.gz 
+        fslmaths 3D_TASK/${space}/pvcorr/perfusion_wm.nii.gz -div $(<./calib_csf/3D_TASK/M0.txt) -mul 6000 3D_TASK/${space}/pvcorr/perfusion_wm_calib_csf.nii.gz 
+    done
+    echo Finished: ${sub} Ing Session 2 - 3D_TASK CSF calibration
 
     echo Finshied: ${sub} - ALL PROCESSING
 

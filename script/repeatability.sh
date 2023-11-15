@@ -1,7 +1,8 @@
 #!/usr/bin/zsh
 
-datadir="/Users/xinzhang/Downloads/mrc_asl_cic/data"
-outputdir="/Users/xinzhang/Downloads/mrc_asl_cic/output"
+# rootdir=/Users/xinzhang/Downloads/mrc_asl_cic
+datadir=$rootdir/data
+outputdir=$rootdir/output
 
 gm_thr=0.7
 wm_thr=0.9

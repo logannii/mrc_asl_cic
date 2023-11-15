@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-datadir="/Users/xinzhang/Downloads/mrc_asl_cic/data"
-outputdir="/Users/xinzhang/Downloads/mrc_asl_cic/output"
+# rootdir=/Users/xinzhang/Downloads/mrc_asl_cic
+datadir=$rootdir/data
+outputdir=$rootdir/output
 
 for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07" "sub08" "sub09" "sub10" 
 do

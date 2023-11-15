@@ -1,6 +1,7 @@
 #!/usr/bin/zsh
 
-datadir=//Users/xinzhang/Downloads/mrc_asl_cic/data
+# rootdir=/Users/xinzhang/Downloads/mrc_asl_cic
+datadir=$rootdir/data
 
 for sub in "sub01" "sub02" "sub03" "sub04" "sub05" "sub06" "sub07" "sub08" "sub09" "sub10" 
 do
