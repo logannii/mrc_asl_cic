@@ -17,7 +17,8 @@ import pandas as pd
 import nibabel as nib
 import regtricks as rt
 
-N = 1  # Number of subjects to process
+N = None  # Number of subjects to process
+CORES = 1
 
 DO_ANAT = False  # Do fsl_anat step
 DO_ASL = True  # Do oxasl step, including ROI reporting
@@ -26,12 +27,10 @@ DO_ROIS = False  # Do ROI reporting
 CONCAT_ROIS = False  # Concatenate ROI stats into a single file
 
 DEBUG = False  # Print stdout to console
-OVERWRITE = False  # Overwrite existing output
+OVERWRITE = True  # Overwrite existing output
 
-ROOT = "/Users/thomaskirk/Data/SPMIC/DATA"
-OUTROOT = op.join(ROOT, "DERIVATIVES")
-
-SEQUENCES = ["philips_2D", "philips_3D", "ge_eASL", "ge_3DASL"]
+ROOT = "/share/CBFPredict/SPMIC/DATA"
+OUTROOT = op.join(ROOT, "../DERIVATIVES")
 
 # Predictive models to run
 PPR_MODELS = ["uncalib_norm_pv", "uncalib_norm_nonpv"]
@@ -51,17 +50,6 @@ def call_func(func_arg_tuple):
     func(*func_arg_tuple[1])
 
 
-def assert_valid_directory(path):
-    files = os.listdir(path)
-    nifti = sum([f.endswith(".nii.gz") for f in files])
-    json = sum([f.endswith(".json") for f in files])
-    if (nifti + json) != 2:
-        logging.error(
-            f"Directory {path} should contain exactly 1 nifti and 1 json files"
-        )
-        raise RuntimeError
-
-
 def sp_run(cmd):
     try:
         if DEBUG:
@@ -76,22 +64,33 @@ def sp_run(cmd):
         logging.error(f"CalledProcessError: \n{cmd}\n\n")
 
 
-def calc_norm_factor(sub, sess, oxdir):
+def calc_norm_factor(oxdir):
     # Load oxasl perfusion map and GM PVs
     # Load freesurfer ctx mask
     # Calculate mean perfusion in ctx mask
-    perf = op.join(oxdir, "output_pvcorr/struc/perfusion.nii.gz")
+    sub = match_key("sub", op.basename(oxdir))
+    ses = match_key("ses", op.basename(oxdir))
+    acq = match_key("acq", op.basename(oxdir))[:2] # GE or ph
+    fsdir = op.join(
+        OUTROOT,
+        f"sub-{sub}",
+        f"ses-{ses}",
+        f"anat/sub-{sub}_ses-{ses}_acq-{acq}*.freesurfer",
+    )
+
+    perf = op.join(oxdir, "output/struc/perfusion.nii.gz")
     pvgm = nib.load(op.join(oxdir, "structural/gm_pv.nii.gz")).get_fdata()
-    ribbon_mgz = op.join(ROOT, "Freesurfer", f"{sub}_MR_{sess}", "mri", "ribbon.mgz")
-    ribbon_nii = rt.Registration.identity().apply_to_image(ribbon_mgz, perf, order=1)
+    ribbon_mgz = op.join(fsdir, "mri", "ribbon.mgz")
+    ribbon_nii = rt.Registration.identity().apply_to_image(glob(ribbon_mgz)[0], perf, order=1)
 
     perf = nib.load(perf).get_fdata()
     mask = (pvgm > 0.5) & (ribbon_nii.get_fdata() > 0)
     return perf[mask].mean()
 
 
-def run_anat(layout, sub, ses):
+def run_anat(sub, ses):
 
+    layout = bids.BIDSLayout(ROOT, validate=False)
     for t1 in layout.get(
         subject=sub, session=ses, datatype="anat", suffix="T1w", extension="nii.gz"
     ):
@@ -109,6 +108,7 @@ def run_anat(layout, sub, ses):
             or OVERWRITE
         ):
             logging.info(f"Running freesurfer on {t1.path}")
+            shutil.rmtree(op.join(out + ".freesurfer"), ignore_errors=True)
             sp_run(
                 f"recon-all -subjid {op.split(out)[1]}.freesurfer -i {t1.path} -all -sd {op.split(out)[0]}"
             )
@@ -129,27 +129,35 @@ def join_keys(key_dict):
     return "_".join([f"{k}-{v}" for k, v in key_dict.items()])
 
 
-def run_asl(layout, sub, ses):
+def run_asl(sub, ses):
     """Run oxasl on a given scanner, subject and session.
 
     fsl_anat is required; fieldmaps are optional.
     """
 
-    asldir = op.join(ROOT, layout.root, f"sub-{sub}", f"ses-{ses}", "perf")
-    for asl in sorted(glob(op.join(asldir, "*asl.nii.gz"))):
-
-        task = match_key("task", op.split(asl)[1])
-        acq = match_key("acq", op.split(asl)[1])
+    layout = bids.BIDSLayout(ROOT, validate=False)
+    asl_files = layout.get(
+        subject=sub,
+        session=ses,
+        suffix="asl",
+        datatype="perf",
+        extension="nii.gz",
+    )
+    for asl in asl_files:
+        entities = asl.get_entities()
+        acq = entities["acquisition"]
+        asl = asl.path
 
         if acq == "GE3D":
-            continue
             # TODO Logan when we work out what to do with GE3D
             run = match_key("run", op.split(asl)[1])
+            task = entities["task"]
+            asldir = op.dirname(asl)
             if run == "01":
-                all_asls = sorted(
+                all_asl = sorted(
                     glob(op.join(asldir, f"*task-{task}_acq-{acq}_run-*_asl.nii.gz"))
                 )
-                all_calib = sorted(
+                all_m0 = sorted(
                     glob(op.join(asldir, f"*task-{task}_acq-{acq}_run-*_m0scan.nii.gz"))
                 )
                 # TODO Logan: undo the WP quantification, concat the ASL into a series, concat the M0
@@ -161,10 +169,31 @@ def run_asl(layout, sub, ses):
                     "perf",
                     f"sub-{sub}_ses-{ses}_task-{task}_acq-{acq}_asl.nii.gz",
                 )
+                m0_new = op.join(
+                    OUTROOT,
+                    f"sub-{sub}",
+                    f"ses-{ses}",
+                    "perf",
+                    f"sub-{sub}_ses-{ses}_task-{task}_acq-{acq}_m0scan.nii.gz",
+                )
+                logging.info(f"Concatenating ASL into a single series as {asl_new}")
+                sp_run(" ".join(
+                    [
+                        f"fslmerge -t {asl_new}", 
+                        " ".join(f"{asl_run}" for asl_run in all_asl)
+                    ]
+                ))
+                logging.info(f"Concatenating M0 into a single series as {m0_new}")
+                sp_run(" ".join(
+                    [
+                        f"fslmerge -t {m0_new}",
+                        " ".join(f"{m0_run}" for m0_run in all_m0)
+                    ]
+                ))
                 # save the new asl, then continue with the pipeline
                 asl = asl_new
             else:
-                # unless it is GE3D run-01, skip
+                # unless it is NOT GE3D run-01, skip
                 logging.info(f"Skipping {asl}")
                 continue
 
@@ -177,22 +206,26 @@ def run_asl(layout, sub, ses):
         )
 
         m0 = asl.replace("asl.nii.gz", "m0scan.nii.gz")
+        assert op.exists(m0), "M0 scan not found"
+        anat_acq = "GE" if acq.count("GE") else "philips"
         anat = op.join(
             OUTROOT,
             f"sub-{sub}",
             f"ses-{ses}",
             "anat",
-            f"sub-{sub}_ses-{ses}_acq-{acq}_T1w.anat",
+            f"sub-{sub}_ses-{ses}_acq-{anat_acq}_T1w.anat",
         )
+        assert op.exists(anat), "fsl_anat not found"
 
-        with open(asl.replace("asl.nii.gz", "aslcontext.tsv"), "r") as f:
-            ctx = f.readlines()
-            order = "".join([c[0] for c in ctx])
-            iaf = order[:2]
-            if iaf == "dd":
-                iaf = "diff"
+        # with open(asl.replace("asl.nii.gz", "aslcontext.tsv"), "r") as f:
+        #     ctx = f.readlines()
+        #     order = "".join([c[0] for c in ctx])
+        #     iaf = order[:2].replace("l", "t")
+        #     if iaf == "dd":
+        #         iaf = "diff"
+        #     if acq == "GE3D":
+        #         iaf = "diff"
 
-        # TODO Logan: are the fmaps only applicable to 2D Philips?
         if acq == "philips2d":
             fmap_hz = layout.get(
                 subject=sub,
@@ -201,6 +234,7 @@ def run_asl(layout, sub, ses):
                 suffix="fieldmap",
                 extension="nii.gz",
             )[0]
+            fmap_hz = fmap_hz.path
             fmap_mag = layout.get(
                 subject=sub,
                 session=ses,
@@ -208,16 +242,17 @@ def run_asl(layout, sub, ses):
                 suffix="magnitude",
                 extension="nii.gz",
             )[0]
-            # TODO logan process the fieldmaps here
+            fmap_mag = fmap_mag.path
+
             fmap_rads = op.join(
-                OUTROOT,
+                ROOT,
                 f"sub-{sub}",
                 f"ses-{ses}",
                 "fmap",
                 f"sub-{sub}_ses-{ses}_acq-{acq}_fieldmaprads.nii.gz",
             )
             fmap_magbrain = op.join(
-                OUTROOT,
+                ROOT,
                 f"sub-{sub}",
                 f"ses-{ses}",
                 "fmap",
@@ -228,42 +263,51 @@ def run_asl(layout, sub, ses):
                 "EstimatedEffectiveEchoSpacing"
             ]
             logging.info(f"Running fieldmap processing on {fmap_hz}")
-            fmap_cmd = (
-                f"fslmaths {fmap_hz} -mul 6.28 {fmap_rads} && ", 
-                f"fugue --loadfmap={fmap_rads} -m --savefmap={fmap_rads} && "
-                f"bet {fmap_mag} {fmap_magbrain} && "
-                f"fslmaths {fmap_magbrain} -ero {fmap_magbrain} "
-            )
-            sp_run(fmap_cmd)
-
+            sp_run(f"fslmaths {fmap_hz} -mul 6.28 {fmap_rads}")
+            sp_run(f"fugue --loadfmap={fmap_rads} -m --savefmap={fmap_rads}")
+            sp_run(f"bet {fmap_mag} {fmap_magbrain}")
+            sp_run(f"fslmaths {fmap_magbrain} -ero {fmap_magbrain} ")
 
         if acq == "philips2d":
             params = {
+                "iaf": "ct",
                 "ibf": "tis",
                 "tis": 3.6,
                 "bolus": 1.8,
                 "rpts": 30,
                 "slicedt": 0.0415,
                 "tr": 8,
-                "cmethod": "voxel",
             }
 
         elif acq == "philips3d":
             params = {
+                "iaf": "ct",
                 "ibf": "tis",
                 "tis": 3.8,
                 "bolus": 1.8,
                 "rpts": 8,
-                "slicedt": 0.0415,
                 "tr": 4.752,
-                "cmethod": "voxel",
+            }
+
+        elif acq == 'GE3D':
+            params = {
+                "iaf": "diff",
+                "ibf": "tis",
+                "tis": 3.475,
+                "bolus": 1.45,
+                "rpts": 5,
+                "cgain": 32,
+                "alpha": 0.6,
+                "tr": 4.764,
             }
 
         elif acq == "GEeASL":
             params = {
+                "iaf": "diff",
                 "ibf": "rpt",
-                "bolus": "1.183,0.682,0.481,0.372,0.303,0.256,0.222",
                 "tis": "4.199,3.016,2.334,1.853,1.481,1.178,0.922",
+                "bolus": "1.183,0.682,0.481,0.372,0.303,0.256,0.222",
+                "rpts": 1,
                 "cgain": 32,
                 "alpha": 0.6,
                 "tr": json.load(open(asl.replace("asl.nii.gz", "asl.json")))[
@@ -271,38 +315,45 @@ def run_asl(layout, sub, ses):
                 ],
             }
 
-        if not op.exists(out) or OVERWRITE:
+        if not op.exists(op.join(out, "output/native/perfusion.nii.gz")) or OVERWRITE:
             os.makedirs(op.dirname(out), exist_ok=True)
             oxasl_cmd = " ".join(
                 [
-                    f"oxasl -i {asl} -o {out} --iaf {iaf} -c {m0}",
-                    f"--fslanat {anat} --debug --overwrite --pvcorr --mc",
+                    f"oxasl -i {asl} -c {m0} --cmethod voxel --casl --fixbolus",
+                    # f"--iaf {iaf}",
+                    f"--fslanat {anat} --debug --overwrite --mc",
+                    f"--pvcorr",
                     " ".join([f"--{k} {v}" for k, v in params.items()]),
                 ]
             )
 
-            # TODO Logan if philips, add fieldmap options 
+            # If philips, add fieldmap options
             if acq == "philips2d":
                 oxasl_cmd += (
                     f" --fmap {fmap_rads} --fmapmag {fmap_mag} --fmapmagbrain {fmap_magbrain} "
                     f" --pedir {pedir} --echospacing {echospacing:.10f}"
                 )
 
+            # Run oxasl with deblurring
+            logging.info(f"Running oxasl with deblurring on {asl}")
+            oxasl_cmd_deblur = oxasl_cmd + " --deblur --kernel=direct --method=fft"
+            sp_run(oxasl_cmd_deblur + f" -o {out}_deblur")
+                
+            # Run normal oxasl
             logging.info(f"Running oxasl on {asl}")
-            # sp_run(oxasl_cmd)
+            sp_run(oxasl_cmd + f" -o {out}")
+
         else:
             logging.info(f"Skipping oxasl on {asl} as it already exists")
 
 
-def run_predictive_modelling(scanner, sub, sess):
-    sub_sess = f"{sub}_MR_{sess}"
-    oxasl_dirs = glob(op.join(OUTROOT, scanner, sub_sess, "func*/*.oxasl"))
-    logging.info(f"Found {len(oxasl_dirs)} oxasl directories for {scanner}/{sub_sess}")
+def run_predictive_modelling(sub, ses):
 
-    visit = ALL_VISITS[
-        (ALL_VISITS["scan label"] == sub_sess) & (ALL_VISITS["scan category"] == "asl")
-    ]
-    gender, age = visit[["GENDER", "AgeAtVisit"]].iloc[0]
+    oxasl_dirs = sorted(
+        glob(op.join(OUTROOT, f"sub-{sub}", f"ses-{ses}", "perf/*.oxasl*"))
+    )
+
+    gender, age = 20, 1
     TILDA_AGE_MEAN = 67.64
     age_demeaned = age - TILDA_AGE_MEAN
     gender_adj = gender - 1
@@ -310,7 +361,7 @@ def run_predictive_modelling(scanner, sub, sess):
     for oxdir in oxasl_dirs:
         logging.info(f"Running predictive modelling in {oxdir}")
 
-        norm_factor = calc_norm_factor(sub, sess, oxdir)
+        norm_factor = calc_norm_factor(oxdir)
         pvgm = op.join(oxdir, "structural/gm_pv_asl.nii.gz")
         pvwm = op.join(oxdir, "structural/wm_pv_asl.nii.gz")
 
@@ -386,21 +437,22 @@ ROI_OUT_NAMES = [
 ]
 
 
-def run_roi_analysis(scanner, sub, sess):
+def run_roi_analysis(sub, ses):
     """Run ROI stats on oxasl output"""
 
-    sub_sess = f"{sub}_MR_{sess}"
-    oxasl_dirs = sorted(glob(op.join(OUTROOT, scanner, sub_sess, "func*/*.oxasl")))
-    logging.info(f"Found {len(oxasl_dirs)} oxasl directories for {scanner}/{sub_sess}")
-
-    # Locate anat, if not found, skip
-    anatdirs = sorted(glob(op.join(OUTROOT, scanner, sub_sess, "anat*")))
-    if not anatdirs:
-        logging.error(f"No anatomy directory found for {sub_sess}; skip")
-        return
-    fsdir = glob(op.join(anatdirs[0], "*T1w.freesurfer"))[0]
+    oxasl_dirs = sorted(
+        glob(op.join(OUTROOT, f"sub-{sub}", f"ses-{ses}", "perf/*.oxasl*"))
+    )
 
     for oxdir in oxasl_dirs:
+        acq = match_key("acq", op.basename(oxdir))
+        fsdir = op.join(
+            OUTROOT,
+            f"sub-{sub}",
+            f"ses-{ses}",
+            f"anat/sub-{sub}_ses-{ses}_acq-{acq}*.freesurfer",
+        )
+
         oxout = op.join(oxdir, "ox_roi_stats")
         fsout = op.join(oxdir, "fs_roi_stats")
         os.makedirs(fsout, exist_ok=True)
@@ -435,7 +487,7 @@ def run_roi_analysis(scanner, sub, sess):
             sp_run(cmd)
 
 
-def run_concat_roi_stats(number=None):
+def run_concat_roi_stats():
     """Concatenate ROI stats into a single file"""
 
     oxasl_rois = []
@@ -452,29 +504,30 @@ def run_concat_roi_stats(number=None):
         df = df.rename(columns={c: c.lower().replace(" ", "_") for c in df.columns})
         return df
 
-    sub_sessions = subject_sessions_for_scanner(scanner)
-    for sub_sess in itertools.islice(sub_sessions, number):
-        sub, sess = sub_sess.split("_MR_")
+    # Each oxasl directory has a corresponding fs_roi_stats directory,
+    # and 2 model predictions
+    for oxdir in sorted(glob(op.join(OUTROOT, "*/*/perf/*.oxasl"))):
+        sub = match_key("sub", op.basename(oxdir))
+        ses = match_key("ses", op.basename(oxdir))
+        acq = match_key("acq", op.basename(oxdir))
 
-        # Each oxasl directory has a corresponding fs_roi_stats directory,
-        # and 2 model predictions
-        for oxdir in sorted(glob(op.join(OUTROOT, scanner, sub_sess, "func*/*.oxasl"))):
-            norm_factor = calc_norm_factor(sub, sess, oxdir)
-            idx = {
-                "subject": sub,
-                "session": sess,
-                "norm_factor": norm_factor,
-            }
+        norm_factor = calc_norm_factor(oxdir)
+        idx = {
+            "subject": sub,
+            "session": ses,
+            "acquisition": acq,
+            "norm_factor": norm_factor,
+        }
 
-            for roi_file in ROI_OUT_NAMES:
-                oxroi = op.join(oxdir, "ox_roi_stats", roi_file)
-                x = read_oxasl_csv(op.join(oxroi, "native/roi_stats.csv"))
-                x = add_index_and_input(x, idx, roi_file.replace("_roi_stats", ""))
-                oxasl_rois.append(x)
+        for roi_file in ROI_OUT_NAMES:
+            oxroi = op.join(oxdir, "ox_roi_stats", roi_file)
+            x = read_oxasl_csv(op.join(oxroi, "native/roi_stats.csv"))
+            x = add_index_and_input(x, idx, roi_file.replace("_roi_stats", ""))
+            oxasl_rois.append(x)
 
-                x = read_fs_roi_txt(op.join(oxdir, "fs_roi_stats", f"{roi_file}.txt"))
-                x = add_index_and_input(x, idx, roi_file.replace("_roi_stats", ""))
-                fs_rois.append(x)
+            x = read_fs_roi_txt(op.join(oxdir, "fs_roi_stats", f"{roi_file}.txt"))
+            x = add_index_and_input(x, idx, roi_file.replace("_roi_stats", ""))
+            fs_rois.append(x)
 
     oxasl_rois = pd.concat(
         [o.rename(columns={"name": "roi"}) for o in oxasl_rois], ignore_index=True
@@ -506,18 +559,10 @@ def read_fs_roi_txt(path):
     return csv
 
 
-def make_chunks(l, n):
-    """Yield n number of striped chunks from l."""
-    chunks = [l[i::n] for i in range(0, n)]
-    assert sum([len(c) for c in chunks]) == len(l)
-    return chunks
-
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--cores", type=int, default=1, help="number of CPU cores to use"
+        "--cores", type=int, default=CORES, help="number of CPU cores to use"
     )
     args = parser.parse_args()
 
@@ -536,12 +581,13 @@ if __name__ == "__main__":
     logging.info(f"Number of cores: {args.cores}")
     os.makedirs(OUTROOT, exist_ok=True)
 
-    layout = bids.BIDSLayout(ROOT)
+    layout = bids.BIDSLayout(ROOT, validate=False)
     sub_ses = [
         (sub, ses)
-        for sub in layout.get_subjects()
+        for sub in itertools.islice(layout.get_subjects(), N)
         for ses in layout.get_sessions(subject=sub)
     ]
+    logging.info(f"Found {len(sub_ses)} subject-session pairs")
 
     for flag, func in zip(
         [DO_ANAT, DO_ASL, DO_PREDICTION, DO_ROIS],
@@ -552,7 +598,7 @@ if __name__ == "__main__":
         jobs = []
         for sub, ses in sub_ses:
             if flag:
-                jobs.append((func, (layout, sub, ses)))
+                jobs.append((func, (sub, ses)))
 
         if args.cores == 1:
             for job in jobs:
