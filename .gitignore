@@ -6,3 +6,8 @@ data/*
 output/*.ipynb_checkpoints
 output/*.log
 output/log_*.*
+BIDS/*
+DERIVATIVES/*
+NIFTI/*
+*.docx
+*.xlsx
