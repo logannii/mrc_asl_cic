@@ -23,7 +23,7 @@ CORES = 1
 DO_ANAT = False  # Do fsl_anat step
 DO_ASL = False  # Do oxasl step, including ROI reporting
 DO_PREDICTION = False  # Do predictive modelling step
-DO_ROIS = True  # Do ROI reporting
+DO_ROIS = False  # Do ROI reporting
 CONCAT_ROIS = True  # Concatenate ROI stats into a single file
 
 DEBUG = False  # Print stdout to console
@@ -177,19 +177,23 @@ def run_asl(sub, ses):
                     f"sub-{sub}_ses-{ses}_task-{task}_acq-{acq}_m0scan.nii.gz",
                 )
                 logging.info(f"Concatenating ASL into a single series as {asl_new}")
-                sp_run(" ".join(
-                    [
-                        f"fslmerge -t {asl_new}", 
-                        " ".join(f"{asl_run}" for asl_run in all_asl)
-                    ]
-                ))
+                sp_run(
+                    " ".join(
+                        [
+                            f"fslmerge -t {asl_new}",
+                            " ".join(f"{asl_run}" for asl_run in all_asl),
+                        ]
+                    )
+                )
                 logging.info(f"Concatenating M0 into a single series as {m0_new}")
-                sp_run(" ".join(
-                    [
-                        f"fslmerge -t {m0_new}",
-                        " ".join(f"{m0_run}" for m0_run in all_m0)
-                    ]
-                ))
+                sp_run(
+                    " ".join(
+                        [
+                            f"fslmerge -t {m0_new}",
+                            " ".join(f"{m0_run}" for m0_run in all_m0),
+                        ]
+                    )
+                )
                 # save the new asl, then continue with the pipeline
                 asl = asl_new
             else:
@@ -289,7 +293,7 @@ def run_asl(sub, ses):
                 "tr": 4.752,
             }
 
-        elif acq == 'GE3D':
+        elif acq == "GE3D":
             params = {
                 "iaf": "diff",
                 "ibf": "tis",
@@ -334,14 +338,14 @@ def run_asl(sub, ses):
                     f" --pedir {pedir} --echospacing {echospacing:.10f}"
                 )
 
+            # Run normal oxasl
+            logging.info(f"Running oxasl on {asl}")
+            sp_run(oxasl_cmd + f" -o {out}")
+
             # Run oxasl with deblurring
             logging.info(f"Running oxasl with deblurring on {asl}")
             oxasl_cmd_deblur = oxasl_cmd + " --deblur --kernel=direct --method=fft"
             sp_run(oxasl_cmd_deblur + f" -o {out}_deblur")
-                
-            # Run normal oxasl
-            logging.info(f"Running oxasl on {asl}")
-            sp_run(oxasl_cmd + f" -o {out}")
 
         else:
             logging.info(f"Skipping oxasl on {asl} as it already exists")
@@ -615,9 +619,8 @@ if __name__ == "__main__":
             with mp.Pool(args.cores) as pool:
                 pool.map(call_func, jobs)
 
-    # only run this is not in SLURM ARRAY mode
-    if CONCAT_ROIS and (args.ntasks == 1):
+    if CONCAT_ROIS:
         logging.info("Concatenating ROI stats")
-        run_concat_roi_stats(number=N)
+        run_concat_roi_stats()
 
     logging.info("DONE")
