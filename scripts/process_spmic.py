@@ -21,13 +21,13 @@ N = None  # Number of subjects to process
 CORES = 1
 
 DO_ANAT = False  # Do fsl_anat step
-DO_ASL = True  # Do oxasl step, including ROI reporting
+DO_ASL = False  # Do oxasl step, including ROI reporting
 DO_PREDICTION = False  # Do predictive modelling step
-DO_ROIS = False  # Do ROI reporting
-CONCAT_ROIS = False  # Concatenate ROI stats into a single file
+DO_ROIS = True  # Do ROI reporting
+CONCAT_ROIS = True  # Concatenate ROI stats into a single file
 
 DEBUG = False  # Print stdout to console
-OVERWRITE = True  # Overwrite existing output
+OVERWRITE = False  # Overwrite existing output
 
 ROOT = "/share/CBFPredict/SPMIC/DATA"
 OUTROOT = op.join(ROOT, "../DERIVATIVES")
@@ -353,7 +353,9 @@ def run_predictive_modelling(sub, ses):
         glob(op.join(OUTROOT, f"sub-{sub}", f"ses-{ses}", "perf/*.oxasl*"))
     )
 
-    gender, age = 20, 1
+    SPMIC_AGE = [39, 27, 26, 22, 26, 30, 29, 23, 22, 21]
+    SPMIC_GENDER = [2, 1, 1, 1, 2, 2, 1, 1, 1, 1]
+    gender, age = SPMIC_AGE[int(sub)-1], SPMIC_GENDER[int(sub)-1]
     TILDA_AGE_MEAN = 67.64
     age_demeaned = age - TILDA_AGE_MEAN
     gender_adj = gender - 1
@@ -445,12 +447,18 @@ def run_roi_analysis(sub, ses):
     )
 
     for oxdir in oxasl_dirs:
+        logging.info(f"Running roi analysis in {oxdir}")
+
         acq = match_key("acq", op.basename(oxdir))
+        if acq.startswith("GE"):
+            acq = "GE"
+        if acq.startswith("philips"):
+            acq = "philips"
         fsdir = op.join(
             OUTROOT,
             f"sub-{sub}",
             f"ses-{ses}",
-            f"anat/sub-{sub}_ses-{ses}_acq-{acq}*.freesurfer",
+            f"anat/sub-{sub}_ses-{ses}_acq-{acq}_T1w.freesurfer",
         )
 
         oxout = op.join(oxdir, "ox_roi_stats")
