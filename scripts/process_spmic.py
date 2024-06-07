@@ -32,6 +32,8 @@ OVERWRITE = True  # Overwrite existing output
 ROOT = "/share/CBFPredict/SPMIC/DATA"
 OUTROOT = op.join(ROOT, "../DERIVATIVES")
 
+GE_RESIZE_FACTOR = [2, 2, 1]
+
 # Predictive models to run
 ppr_modelpath = "/share/CBFPredict/TILDA/GLM/conform_cdf_linear_demog/model.h5"
 
@@ -124,6 +126,7 @@ def run_asl(sub, ses):
         acq = entities["acquisition"]
         asl = asl.path
 
+        # If GE3D, concatenate all runs into a single series
         if acq == "GE3D":
             run = match_key("run", op.split(asl)[1])
             task = entities["task"]
@@ -138,35 +141,25 @@ def run_asl(sub, ses):
 
                 asl_new = op.join(
                     OUTROOT,
-                    f"sub-{sub}",
-                    f"ses-{ses}",
-                    "perf",
-                    f"sub-{sub}_ses-{ses}_task-{task}_acq-{acq}_asl.nii.gz",
+                    f"sub-{sub}/ses-{ses}/perf/sub-{sub}_ses-{ses}_task-{task}_acq-{acq}_asl.nii.gz",
                 )
                 m0_new = op.join(
                     OUTROOT,
-                    f"sub-{sub}",
-                    f"ses-{ses}",
-                    "perf",
-                    f"sub-{sub}_ses-{ses}_task-{task}_acq-{acq}_m0scan.nii.gz",
+                    f"sub-{sub}/ses-{ses}/perf/sub-{sub}_ses-{ses}_task-{task}_acq-{acq}_m0scan.nii.gz",
                 )
                 logging.info(f"Concatenating ASL into a single series as {asl_new}")
                 sp_run(
-                    " ".join(
-                        [
+                    " ".join([
                             f"fslmerge -t {asl_new}",
                             " ".join(f"{asl_run}" for asl_run in all_asl),
-                        ]
-                    )
+                    ])
                 )
                 logging.info(f"Concatenating M0 into a single series as {m0_new}")
                 sp_run(
-                    " ".join(
-                        [
+                    " ".join([
                             f"fslmerge -t {m0_new}",
                             " ".join(f"{m0_run}" for m0_run in all_m0),
-                        ]
-                    )
+                    ])
                 )
                 # save the new asl, then continue with the pipeline
                 asl = asl_new
@@ -175,11 +168,23 @@ def run_asl(sub, ses):
                 logging.info(f"Skipping {asl}")
                 continue
 
+        # If GE (3D or eASL), resize the in-plane resolution to double the voxel size
+        if acq.startswith("GE"):
+            asl_orig = nib.load(asl)
+            asl_orig_spc = rt.ImageSpace(asl)
+            asl_resized_spc = asl_orig_spc.resize_voxels(GE_RESIZE_FACTOR)
+            asl_resized = rt.Registration.identity().apply_to_image(asl_orig, asl_resized_spc, order=1)
+            asl_resized.to_filename(asl)
+
+            m0_orig = nib.load(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
+            m0_orig_spc = rt.ImageSpace(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
+            m0_resized_spc = m0_orig_spc.resize_voxels(GE_RESIZE_FACTOR)
+            m0_resized = rt.Registration.identity().apply_to_image(m0_orig, m0_resized_spc, order=1)    
+            m0_resized.to_filename(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
+
         out = op.join(
             OUTROOT,
-            f"sub-{sub}",
-            f"ses-{ses}",
-            "perf",
+            f"sub-{sub}/ses-{ses}/perf",
             op.split(asl)[1].replace(".nii.gz", ".qasl"),
         )
 
@@ -188,22 +193,19 @@ def run_asl(sub, ses):
         anat_acq = "GE" if acq.count("GE") else "philips"
         anat = op.join(
             OUTROOT,
-            f"sub-{sub}",
-            f"ses-{ses}",
-            "anat",
+            f"sub-{sub}/ses-{ses}/anat",
             f"sub-{sub}_ses-{ses}_acq-{anat_acq}_T1w.anat",
         )
         assert op.exists(anat), "fsl_anat not found"
 
         fsdir = op.join(
             OUTROOT,
-            f"sub-{sub}",
-            f"ses-{ses}",
-            "anat",
+            f"sub-{sub}/ses-{ses}/anat",
             f"sub-{sub}_ses-{ses}_acq-{anat_acq}_T1w.freesurfer",
         )
         assert op.exists(anat), "fsl_anat not found"
 
+        # Fieldmap processing for philips2d only
         if acq == "philips2d":
             fmap_hz = layout.get(
                 subject=sub,
@@ -246,6 +248,7 @@ def run_asl(sub, ses):
             sp_run(f"bet {fmap_mag} {fmap_magbrain}")
             sp_run(f"fslmaths {fmap_magbrain} -ero {fmap_magbrain} ")
 
+        # qasl parameters for each acquisition
         if acq == "philips2d":
             params = {
                 "iaf": "ct",
@@ -257,7 +260,6 @@ def run_asl(sub, ses):
                 "tr": 8,
                 "mc": "",
             }
-
         elif acq == "philips3d":
             params = {
                 "iaf": "ct",
@@ -269,7 +271,6 @@ def run_asl(sub, ses):
                 "deblur": " --kernel=direct --deblur-method=inference --save-kernel",
                 "mc": "",
             }
-
         elif acq == "GE3D":
             params = {
                 "iaf": "diff",
@@ -280,10 +281,8 @@ def run_asl(sub, ses):
                 "cgain": 32,
                 "alpha": 0.6,
                 "tr": 4.764,
-                "mc": "",
-                "deblur": " --kernel=lorentz --lorentz-gamma=10 --deblur-method=inference --save-kernel",
+                "deblur": " --deblur-kernel=lorentz --lorentz-gamma=5 --deblur-method=inference --save-kernel",
             }
-
         elif acq == "GEeASL":
             params = {
                 "iaf": "diff",
@@ -296,18 +295,20 @@ def run_asl(sub, ses):
                 "tr": json.load(open(asl.replace("asl.nii.gz", "asl.json")))[
                     "RepetitionTime"
                 ],
-                "mc": "",
-                "deblur": " --kernel=lorentz --lorentz-gamma=10 --deblur-method=inference --save-kernel",
+                "deblur": " --deblur-kernel=lorentz --lorentz-gamma=5 --deblur-method=inference --save-kernel",
             }
 
         for method in ["_ssvb", "_basil"]:
             if not op.exists(op.join(out+method, "report")) or OVERWRITE:
                 os.makedirs(op.dirname(out+method), exist_ok=True)
+
+                # Turn off deblur for basil, and for philips2d
                 if (method == "_basil") and (acq != "philips2d"):
                     params.pop("deblur")
+
                 qasl_cmd = " ".join(
                     [
-                        f"qasl -i {asl} -c {m0} --cmethod voxel --casl --harmonise --fixbolus",
+                        f"qasl -i {asl} -c {m0} --cmethod voxel --casl",
                         f"--fslanat {anat} --debug --overwrite --output-mni --pvcorr",
                         " ".join([f"--{k} {v}" for k, v in params.items()]),
                     ]
@@ -315,7 +316,7 @@ def run_asl(sub, ses):
                 # If ssvb, add inference-method options
                 if method == "_ssvb":
                     qasl_cmd += (
-                        f" --inference-method ssvb --cores 1 --fsdir {fsdir} --mask-restrict-cortex"
+                        f" --inference-method ssvb --cores 1 --fsdir {fsdir} --mask-restrict-cortex --harmonise"
                     )
 
                 # If philips, add fieldmap options
