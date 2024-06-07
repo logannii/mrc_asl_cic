@@ -268,7 +268,7 @@ def run_asl(sub, ses):
                 "bolus": 1.8,
                 "rpts": 8,
                 "tr": 4.752,
-                "deblur": " --kernel=direct --deblur-method=inference --save-kernel",
+                "deblur": " --deblur-kernel=direct --deblur-method=inference --save-kernel",
                 "mc": "",
             }
         elif acq == "GE3D":
