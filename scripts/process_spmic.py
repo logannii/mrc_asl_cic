@@ -168,20 +168,6 @@ def run_asl(sub, ses):
                 logging.info(f"Skipping {asl}")
                 continue
 
-        # If GE (3D or eASL), resize the in-plane resolution to double the voxel size
-        if acq.startswith("GE"):
-            asl_orig = nib.load(asl)
-            asl_orig_spc = rt.ImageSpace(asl)
-            asl_resized_spc = asl_orig_spc.resize_voxels(GE_RESIZE_FACTOR)
-            asl_resized = rt.Registration.identity().apply_to_image(asl_orig, asl_resized_spc, order=1)
-            asl_resized.to_filename(asl)
-
-            m0_orig = nib.load(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
-            m0_orig_spc = rt.ImageSpace(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
-            m0_resized_spc = m0_orig_spc.resize_voxels(GE_RESIZE_FACTOR)
-            m0_resized = rt.Registration.identity().apply_to_image(m0_orig, m0_resized_spc, order=1)    
-            m0_resized.to_filename(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
-
         out = op.join(
             OUTROOT,
             f"sub-{sub}/ses-{ses}/perf",
@@ -203,7 +189,24 @@ def run_asl(sub, ses):
             f"sub-{sub}/ses-{ses}/anat",
             f"sub-{sub}_ses-{ses}_acq-{anat_acq}_T1w.freesurfer",
         )
-        assert op.exists(anat), "fsl_anat not found"
+        assert op.exists(fsdir), "fsdir not found"
+
+        # If GE (3D or eASL), resize the in-plane resolution to double the voxel size
+        if acq.startswith("GE"):
+            asl_orig = nib.load(asl)
+            asl_orig_spc = rt.ImageSpace(asl)
+            asl_resized_spc = asl_orig_spc.resize_voxels(GE_RESIZE_FACTOR)
+            asl_resized = rt.Registration.identity().apply_to_image(asl_orig, asl_resized_spc, order=1)
+            asl_resized.to_filename(out.replace(".qasl", ".nii.gz"))
+
+            m0_orig = nib.load(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
+            m0_orig_spc = rt.ImageSpace(asl.replace("asl.nii.gz", "m0scan.nii.gz"))
+            m0_resized_spc = m0_orig_spc.resize_voxels(GE_RESIZE_FACTOR)
+            m0_resized = rt.Registration.identity().apply_to_image(m0_orig, m0_resized_spc, order=1)    
+            m0_resized.to_filename(out.replace("asl.qasl", "m0scan.nii.gz"))
+
+        else:
+            continue
 
         # Fieldmap processing for philips2d only
         if acq == "philips2d":
@@ -298,7 +301,7 @@ def run_asl(sub, ses):
                 "deblur": " --deblur-kernel=lorentz --lorentz-gamma=5 --deblur-method=inference --save-kernel",
             }
 
-        for method in ["_ssvb", "_basil"]:
+        for method in ["_ssvb"]:
             if not op.exists(op.join(out+method, "report")) or OVERWRITE:
                 os.makedirs(op.dirname(out+method), exist_ok=True)
 
@@ -382,32 +385,32 @@ def run_roi_stats(sub, ses):
         fsdir = op.join(OUTROOT, f"sub-{sub}/ses-{ses}/anat/sub-{sub}_ses-{ses}_acq-{acq}_T1w.freesurfer")
 
         if op.exists(op.join(qasl_dir, "ppr")):
-            innames.append([
+            innames += [
                 "ppr/native/prediction.nii.gz",
                 "ppr/native/perfusion-prediction.nii.gz",
                 "ppr/native/harmonised/prediction.nii.gz",
                 "ppr/native/harmonised/perfusion-prediction.nii.gz",
-            ])
-            outnames.append([
+            ]
+            outnames += [
                 "ppr_pred",
                 "ppr_diff", 
                 "ppr_harm_pred",
                 "ppr_harm_diff",
-            ])
+            ]
         
         if op.exists(op.join(qasl_dir, "ssvb")):
-            innames.append([
+            innames += [
                 "output/native/harmonised/perfusion.nii.gz",
                 "output/native/calib_voxelwise/harmonised/perfusion.nii.gz",
                 "output_pvcorr/native/harmonised/perfusion.nii.gz", 
                 "output_pvcorr/native/calib_voxelwise/harmonised/perfusion.nii.gz",
-            ])
-            outnames.append([
+            ]
+            outnames += [
                 "perf_harm",
                 "perf_calib_harm",
                 "perf_pvec_harm",
                 "perf_calib_pvec_harm",
-            ])
+            ]
         
         # Run qasl_region_analysis
         for inname, outname in zip(innames, outnames):
